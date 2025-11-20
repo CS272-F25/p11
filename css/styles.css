@@ -15,3 +15,9 @@ footer{color:#334;}
 #balance-list .balance-box{background:#f8f9fa;border:1px solid #e3e5e7;border-radius:.5rem;padding:.75rem}
 #profile-preview .label{font-weight:600;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
 @media (max-width:576px){.navbar-brand{font-size:1rem}}
+
+/* Chore rotation demo styles */
+.chore-rotation-card{max-width:640px}
+.chore-rotation-card .list-group-item{font-weight:500}
+.chore-rotation-card .badge{background:var(--brand);}
+.chore-rotation-card .btn{min-width:120px}

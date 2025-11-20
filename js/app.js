@@ -6,6 +6,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     initExpenseSplitter(); // existing home demo
+    initChoreRotationDemo();
     initDirectoryPage();
     initFinancePage();
     initChoresPage();
@@ -13,6 +14,71 @@
     initSearchPage();
     initProfilePage();
   });
+
+  // Chore Rotation Demo (home page)
+  function initChoreRotationDemo(){
+    const container = document.getElementById('chore-rotation-list');
+    if(!container) return;
+    const btn = document.getElementById('rotate-chores-btn');
+    const resetBtn = document.getElementById('reset-chores-btn');
+    const defaultChores = ['Dishes','Trash','Vacuum','Laundry'];
+    const defaultRoommates = ['Roommate A','Roommate B','Roommate C'];
+
+    let state = getJSON('cohabit_chore_rotation', {chores: defaultChores, roommates: defaultRoommates, assignments: []});
+    if(!state.assignments || state.assignments.length !== state.chores.length){
+      state.assignments = assign(state.chores, state.roommates);
+      setJSON('cohabit_chore_rotation', state);
+    }
+
+    render();
+
+    btn.addEventListener('click', () => {
+      state.assignments = assign(state.chores, state.roommates);
+      setJSON('cohabit_chore_rotation', state);
+      btn.disabled = true; btn.textContent = 'Rotating…';
+      setTimeout(() => { render(); btn.disabled = false; btn.textContent = 'Rotate chores'; }, 350);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      state = {chores: defaultChores, roommates: defaultRoommates, assignments: assign(defaultChores, defaultRoommates)};
+      setJSON('cohabit_chore_rotation', state);
+      render();
+    });
+
+    function assign(chores, roommates){
+  
+      const pool = shuffle(roommates.slice());
+      const assignments = chores.map((c,i) => pool[i % pool.length]);
+      return assignments;
+    }
+
+    function render(){
+      while(container.firstChild) container.removeChild(container.firstChild);
+      state.chores.forEach((chore, i) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center chore-item';
+
+        const choreSpan = document.createElement('span');
+        choreSpan.textContent = chore;
+
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-primary rounded-pill';
+        badge.textContent = state.assignments[i] || '—';
+
+        li.appendChild(choreSpan);
+        li.appendChild(badge);
+        container.appendChild(li);
+      });
+    }
+
+    function shuffle(arr){
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+  }
 
   // Home expense splitter
   function initExpenseSplitter(){
