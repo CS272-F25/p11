@@ -149,3 +149,14 @@
   margin-bottom: 1rem;
   opacity: 0.3;
 }
+
+/* Charts */
+#expenseChart,
+#balanceChart {
+  max-height: 300px;
+}
+
+#expenseChartEmpty,
+#balanceChartEmpty {
+  display: none;
+}

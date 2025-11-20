@@ -83,8 +83,12 @@
     const expenseList = document.getElementById('expense-list');
     const balanceList = document.getElementById('balance-list');
     let expenses = getJSON('cohabit_expenses', []);
+    let expenseChart = null;
+    let balanceChart = null;
+    
     render();
     updateStats();
+    updateCharts();
     
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -98,6 +102,7 @@
       form.reset();
       render();
       updateStats();
+      updateCharts();
     });
     
     function render(){
@@ -187,6 +192,146 @@
       if(totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
       if(countEl) countEl.textContent = expenses.length;
       if(participantsEl) participantsEl.textContent = participants.size;
+    }
+    
+    function updateCharts(){
+      if(typeof Chart === 'undefined') return;
+      
+      const expenseCanvas = document.getElementById('expenseChart');
+      const expenseEmpty = document.getElementById('expenseChartEmpty');
+      const balanceCanvas = document.getElementById('balanceChart');
+      const balanceEmpty = document.getElementById('balanceChartEmpty');
+      
+      if(!expenseCanvas || !balanceCanvas) return;
+      
+      // Show/hide empty states
+      if(expenses.length === 0){
+        if(expenseCanvas) expenseCanvas.style.display = 'none';
+        if(expenseEmpty) expenseEmpty.style.display = 'block';
+        if(balanceCanvas) balanceCanvas.style.display = 'none';
+        if(balanceEmpty) balanceEmpty.style.display = 'block';
+        return;
+      }
+      
+      if(expenseCanvas) expenseCanvas.style.display = 'block';
+      if(expenseEmpty) expenseEmpty.style.display = 'none';
+      if(balanceCanvas) balanceCanvas.style.display = 'block';
+      if(balanceEmpty) balanceEmpty.style.display = 'none';
+      
+      // Expense Breakdown Chart (Doughnut)
+      const expenseCategories = {};
+      expenses.forEach(exp => {
+        expenseCategories[exp.desc] = (expenseCategories[exp.desc] || 0) + exp.amt;
+      });
+      
+      const expenseLabels = Object.keys(expenseCategories);
+      const expenseData = Object.values(expenseCategories);
+      const expenseColors = generateColors(expenseLabels.length);
+      
+      if(expenseChart) expenseChart.destroy();
+      expenseChart = new Chart(expenseCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: expenseLabels,
+          datasets: [{
+            data: expenseData,
+            backgroundColor: expenseColors,
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: {size: 12}
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': $' + context.parsed.toFixed(2);
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // Balance Chart (Bar)
+      const balances = {};
+      expenses.forEach(ex => {
+        const share = ex.amt / ex.participants.length;
+        if(!balances[ex.paidBy]) balances[ex.paidBy] = 0;
+        balances[ex.paidBy] += ex.amt;
+        ex.participants.forEach(p => {
+          if(!balances[p]) balances[p] = 0;
+          balances[p] -= share;
+        });
+      });
+      
+      const balanceLabels = Object.keys(balances);
+      const balanceData = Object.values(balances);
+      const balanceColors = balanceData.map(val => 
+        val > 0.01 ? '#22c55e' : val < -0.01 ? '#ef4444' : '#6366f1'
+      );
+      
+      if(balanceChart) balanceChart.destroy();
+      balanceChart = new Chart(balanceCanvas, {
+        type: 'bar',
+        data: {
+          labels: balanceLabels,
+          datasets: [{
+            label: 'Balance ($)',
+            data: balanceData,
+            backgroundColor: balanceColors,
+            borderWidth: 0,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {display: false},
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.parsed.y;
+                  const status = val > 0 ? 'Is owed' : val < 0 ? 'Owes' : 'Settled';
+                  return status + ': $' + Math.abs(val).toFixed(2);
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {color: '#e2e8f0'},
+              ticks: {
+                callback: function(value) {
+                  return '$' + value.toFixed(0);
+                }
+              }
+            },
+            x: {
+              grid: {display: false}
+            }
+          }
+        }
+      });
+    }
+    
+    function generateColors(count){
+      const colors = [
+        '#10b981', '#6366f1', '#f59e0b', '#ef4444', '#8b5cf6',
+        '#ec4899', '#14b8a6', '#f97316', '#06b6d4', '#84cc16'
+      ];
+      return Array.from({length: count}, (_, i) => colors[i % colors.length]);
     }
   }
 
