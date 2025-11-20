@@ -4,6 +4,7 @@ body{background:var(--bg);color:#212529;font-family:system-ui,-apple-system,"Seg
 main h2{color:var(--brand);margin-top:1.25rem}
 main p{line-height:1.6}
 :focus{outline:3px solid rgba(13,110,253,.35);outline-offset:2px}
+.profile-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:2px solid rgba(255,255,255,.3);display:inline-block;vertical-align:middle}
 footer{color:#334;}
 .badge-tag{background:var(--brand);color:#fff;border-radius:.35rem;padding:.35em .6em;font-size:.65rem;letter-spacing:.5px;margin:.15rem .25rem .15rem 0;display:inline-block}
 .card.roommate-card{min-height:140px}

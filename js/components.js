@@ -28,18 +28,6 @@
         const linkPage = link.getAttribute('data-page');
         if (linkPage === pageName) {
           link.classList.add('active');
-          if (link.classList.contains('dropdown-toggle')) {
-            link.classList.add('active');
-          }
-          if (link.classList.contains('dropdown-item')) {
-            link.classList.add('active');
-            // Also mark parent dropdown as active
-            const dropdown = link.closest('.dropdown');
-            if (dropdown) {
-              const toggle = dropdown.querySelector('.dropdown-toggle');
-              if (toggle) toggle.classList.add('active');
-            }
-          }
         }
       });
     }, 50);
