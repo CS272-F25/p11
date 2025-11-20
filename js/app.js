@@ -90,6 +90,7 @@
     updateStats();
     updateCharts();
     renderSettlements();
+    renderTransactions();
     
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -105,6 +106,7 @@
       updateStats();
       updateCharts();
       renderSettlements();
+      renderTransactions();
     });
     
     function render(){
@@ -158,6 +160,7 @@
               updateStats();
               updateCharts();
               renderSettlements();
+              renderTransactions();
             }
           });
         });
@@ -302,9 +305,74 @@
             updateStats();
             updateCharts();
             renderSettlements();
+            renderTransactions();
           }
         });
       });
+    }
+    
+    function renderTransactions(){
+      const list = document.getElementById('transactions-list');
+      if(!list) return;
+      
+      if(expenses.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📜</div>
+            <p>Transaction history will appear here</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Sort expenses by date (most recent first)
+      const sortedExpenses = [...expenses].sort((a, b) => b.date - a.date);
+      
+      // Show only the 10 most recent transactions
+      const recentExpenses = sortedExpenses.slice(0, 10);
+      
+      list.innerHTML = `
+        <div class="transaction-timeline">
+          ${recentExpenses.map(exp => {
+            const date = new Date(exp.date);
+            const timeAgo = getTimeAgo(exp.date);
+            const isSettlement = exp.isSettlement || exp.desc.startsWith('Settlement:');
+            
+            return `
+              <div class="transaction-item ${isSettlement ? 'settlement-transaction' : ''}">
+                <div class="transaction-icon">${isSettlement ? '✓' : '💳'}</div>
+                <div class="transaction-details">
+                  <div class="transaction-header">
+                    <h6 class="transaction-title">${escape(exp.desc)}</h6>
+                    <span class="transaction-amount">$${exp.amt.toFixed(2)}</span>
+                  </div>
+                  <div class="transaction-meta">
+                    <span class="transaction-payer">Paid by ${escape(exp.paidBy)}</span>
+                    <span class="transaction-separator">•</span>
+                    <span class="transaction-participants">${exp.participants.map(escape).join(', ')}</span>
+                  </div>
+                  <div class="transaction-time">${timeAgo}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        ${sortedExpenses.length > 10 ? `<div class="text-center mt-3 text-muted small">Showing 10 most recent of ${sortedExpenses.length} transactions</div>` : ''}
+      `;
+    }
+    
+    function getTimeAgo(timestamp){
+      const now = Date.now();
+      const diff = now - timestamp;
+      const seconds = Math.floor(diff / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+      
+      if(days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+      if(hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      if(minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      return 'Just now';
     }
     
     function updateStats(){
