@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoHabit — Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div data-component="navbar" data-page="home"></div>
+
+  <main class="container py-5">
+    <h1 class="mb-3">CoHabit — Roommate management made simple</h1>
+    <p class="lead">Centralize chores, costs, and communication so shared living stays fair and stress-free.</p>
+
+    <section aria-labelledby="quick-features" class="my-4">
+      <h2 id="quick-features">Quick Features</h2>
+      <div class="row">
+        <article class="col-md-4 mb-3">
+          <div class="card h-100 p-3">
+            <h3 class="h5">Directory</h3>
+            <p>Add and manage household members and contact info.</p>
+            <a href="/directory.html" class="btn btn-sm btn-outline-primary">Try it →</a>
+          </div>
+        </article>
+        <article class="col-md-4 mb-3">
+          <div class="card h-100 p-3">
+            <h3 class="h5">Finance</h3>
+            <p>Log expenses, split costs, and track balances.</p>
+            <a href="/finance.html" class="btn btn-sm btn-outline-primary">Try it →</a>
+          </div>
+        </article>
+        <article class="col-md-4 mb-3">
+          <div class="card h-100 p-3">
+            <h3 class="h5">Chores</h3>
+            <p>Assign recurring tasks and track completion status.</p>
+            <a href="/chores.html" class="btn btn-sm btn-outline-primary">Try it →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="expense-splitter" class="my-5">
+      <h2 id="expense-splitter">Expense Splitter Demo</h2>
+      <form id="split-form" class="row g-3" novalidate>
+        <div class="col-md-6">
+          <label for="total" class="form-label">Total amount ($)</label>
+          <input type="number" step="0.01" class="form-control" id="total" name="total" aria-describedby="total-help" required>
+          <div id="total-help" class="form-text">Enter the total expense to split.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="count" class="form-label">Number of roommates</label>
+          <input type="number" min="1" class="form-control" id="count" name="count" required>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-success" type="submit">Calculate split</button>
+        </div>
+      </form>
+      <div id="split-result" class="mt-3" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div data-component="footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
