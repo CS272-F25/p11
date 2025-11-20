@@ -79,53 +79,7 @@
       </div>
     </section>
 
-    <section aria-labelledby="chore-simulator" class="my-5">
-      <h2 id="chore-simulator">Chore Rotation Simulator</h2>
-      <div class="card p-3 chore-simulator-card mx-auto">
-        <p class="mb-2">Interactive Smart Chore Scheduler — enter roommates and chores, then generate a fair rotation. Use the animation to preview Week 1 / Week 2.</p>
 
-        <div class="simulator-inputs row g-2 mb-3">
-          <div class="col-md-6">
-            <label for="sim-roommates" class="form-label">Roommates (comma separated)</label>
-            <input id="sim-roommates" class="form-control" value="Roommate A, Roommate B, Roommate C" aria-describedby="roommate-help">
-            <div id="roommate-help" class="form-text">Add names separated by commas.</div>
-          </div>
-          <div class="col-md-6">
-            <label for="sim-chores" class="form-label">Chores (comma separated)</label>
-            <input id="sim-chores" class="form-control" value="Dishes, Trash, Vacuum, Laundry">
-          </div>
-          <div class="col-12 d-flex gap-2">
-            <button id="sim-generate" class="btn btn-primary">Generate Rotation</button>
-            <button id="sim-reset" class="btn btn-secondary">Reset</button>
-          </div>
-        </div>
-
-        <div class="simulator-results row gy-3" aria-live="polite">
-          <!-- Week cards will be inserted here -->
-          <div class="col-12 col-md-6" id="sim-week-1-wrap"></div>
-          <div class="col-12 col-md-6" id="sim-week-2-wrap"></div>
-        </div>
-      </div>
-    </section>
-
-    <section aria-labelledby="expense-splitter" class="my-5">
-      <h2 id="expense-splitter">Expense Splitter Demo</h2>
-      <form id="split-form" class="row g-3" novalidate>
-        <div class="col-md-6">
-          <label for="total" class="form-label">Total amount ($)</label>
-          <input type="number" step="0.01" class="form-control" id="total" name="total" aria-describedby="total-help" required>
-          <div id="total-help" class="form-text">Enter the total expense to split.</div>
-        </div>
-        <div class="col-md-6">
-          <label for="count" class="form-label">Number of roommates</label>
-          <input type="number" min="1" class="form-control" id="count" name="count" required>
-        </div>
-        <div class="col-12">
-          <button class="btn btn-success" type="submit">Calculate split</button>
-        </div>
-      </form>
-      <div id="split-result" class="mt-3" aria-live="polite"></div>
-    </section>
   </main>
 
   <div data-component="footer"></div>
