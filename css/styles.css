@@ -16,11 +16,6 @@ footer{color:#334;}
 #profile-preview .label{font-weight:600;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
 @media (max-width:576px){.navbar-brand{font-size:1rem}}
 
-/* Chore rotation demo styles */
-.chore-rotation-card{max-width:640px}
-.chore-rotation-card .list-group-item{font-weight:500}
-.chore-rotation-card .badge{background:var(--brand);}
-.chore-rotation-card .btn{min-width:120px}
 
 /* Dashboard */
 .mini-dashboard-card{max-width:900px}
