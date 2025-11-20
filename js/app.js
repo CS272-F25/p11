@@ -89,6 +89,7 @@
     render();
     updateStats();
     updateCharts();
+    renderSettlements();
     
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -103,6 +104,7 @@
       render();
       updateStats();
       updateCharts();
+      renderSettlements();
     });
     
     function render(){
@@ -116,16 +118,24 @@
           </div>
         `;
       } else {
-        expenseList.innerHTML = expenses.map(exp => {
+        expenseList.innerHTML = expenses.map((exp, idx) => {
           const share = exp.amt / exp.participants.length;
           return `
-            <div class="expense-card">
+            <div class="expense-card" data-expense-id="${exp.id}">
               <div class="d-flex justify-content-between align-items-start mb-2">
-                <div>
+                <div class="flex-grow-1">
                   <h6 class="mb-1">${escape(exp.desc)}</h6>
                   <small class="text-muted">Paid by ${escape(exp.paidBy)}</small>
                 </div>
-                <div class="expense-amount">$${exp.amt.toFixed(2)}</div>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="expense-amount">$${exp.amt.toFixed(2)}</div>
+                  <button class="btn btn-sm btn-outline-danger delete-expense-btn" data-expense-id="${exp.id}" aria-label="Delete expense">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div class="expense-participants">
                 ${exp.participants.map(p => `<span class="participant-badge">${escape(p)}</span>`).join('')}
@@ -136,6 +146,21 @@
             </div>
           `;
         }).join('');
+        
+        // Add delete event listeners
+        document.querySelectorAll('.delete-expense-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const expenseId = this.getAttribute('data-expense-id');
+            if(confirm('Delete this expense?')) {
+              expenses = expenses.filter(e => e.id !== expenseId);
+              setJSON('cohabit_expenses', expenses);
+              render();
+              updateStats();
+              updateCharts();
+              renderSettlements();
+            }
+          });
+        });
       }
       
       // Calculate and render balances
@@ -179,6 +204,107 @@
       }
       
       setJSON('cohabit_balances_cache', balances);
+    }
+    
+    function renderSettlements(){
+      const list = document.getElementById('settlements-list');
+      if(!list) return;
+      
+      // Calculate balances
+      const balances = {};
+      expenses.forEach(ex => {
+        const share = ex.amt / ex.participants.length;
+        if(!balances[ex.paidBy]) balances[ex.paidBy] = 0;
+        balances[ex.paidBy] += ex.amt;
+        ex.participants.forEach(p => {
+          if(!balances[p]) balances[p] = 0;
+          balances[p] -= share;
+        });
+      });
+      
+      // Split into creditors (owed) and debtors (owe)
+      const creditors = [];
+      const debtors = [];
+      
+      Object.entries(balances).forEach(([name, amount]) => {
+        if(amount > 0.01) {
+          creditors.push({name, amount});
+        } else if(amount < -0.01) {
+          debtors.push({name, amount: Math.abs(amount)});
+        }
+      });
+      
+      // Calculate settlements
+      const settlements = [];
+      const creditorsCopy = creditors.map(c => ({...c}));
+      const debtorsCopy = debtors.map(d => ({...d}));
+      
+      debtorsCopy.forEach(debtor => {
+        let remaining = debtor.amount;
+        creditorsCopy.forEach(creditor => {
+          if(remaining > 0.01 && creditor.amount > 0.01) {
+            const payment = Math.min(remaining, creditor.amount);
+            settlements.push({
+              from: debtor.name,
+              to: creditor.name,
+              amount: payment
+            });
+            remaining -= payment;
+            creditor.amount -= payment;
+          }
+        });
+      });
+      
+      // Render settlements
+      if(settlements.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">✅</div>
+            <h5>All Settled!</h5>
+            <p>No outstanding payments needed</p>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = settlements.map((s, idx) => `
+        <div class="settlement-card" data-settlement-idx="${idx}">
+          <div class="settlement-icon">💳</div>
+          <div class="settlement-content">
+            <div class="settlement-from">${escape(s.from)}</div>
+            <div class="settlement-arrow">→</div>
+            <div class="settlement-to">${escape(s.to)}</div>
+          </div>
+          <div class="settlement-amount">$${s.amount.toFixed(2)}</div>
+          <button class="btn btn-sm btn-success settle-payment-btn" data-settlement='${JSON.stringify(s)}' aria-label="Mark as settled">
+            ✓ Settle
+          </button>
+        </div>
+      `).join('');
+      
+      // Add settle event listeners
+      document.querySelectorAll('.settle-payment-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const settlement = JSON.parse(this.getAttribute('data-settlement'));
+          if(confirm(`Mark payment of $${settlement.amount.toFixed(2)} from ${settlement.from} to ${settlement.to} as settled?`)) {
+            // Create a settlement expense entry
+            expenses.push({
+              id: uid(),
+              desc: `Settlement: ${settlement.from} → ${settlement.to}`,
+              amt: settlement.amount,
+              paidBy: settlement.from,
+              participants: [settlement.to],
+              date: Date.now(),
+              isSettlement: true
+            });
+            setJSON('cohabit_expenses', expenses);
+            render();
+            updateStats();
+            updateCharts();
+            renderSettlements();
+          }
+        });
+      });
     }
     
     function updateStats(){

@@ -160,3 +160,86 @@
 #balanceChartEmpty {
   display: none;
 }
+
+/* Settlements / Who Owes Who */
+.settlement-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+}
+
+.settlement-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.settlement-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.settlement-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.settlement-from,
+.settlement-to {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 1.1rem;
+}
+
+.settlement-arrow {
+  font-size: 1.5rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.settlement-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--bg-light);
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  flex-shrink: 0;
+}
+
+.settle-payment-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.delete-expense-btn {
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 576px) {
+  .settlement-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .settlement-content {
+    justify-content: center;
+  }
+  
+  .settlement-amount,
+  .settle-payment-btn {
+    width: 100%;
+  }
+}
