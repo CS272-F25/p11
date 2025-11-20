@@ -80,38 +80,113 @@
     const page = document.getElementById('finance-page');
     if(!page) return;
     const form = document.getElementById('expense-form');
-    const tbody = document.querySelector('#expense-table tbody');
+    const expenseList = document.getElementById('expense-list');
     const balanceList = document.getElementById('balance-list');
     let expenses = getJSON('cohabit_expenses', []);
     render();
+    updateStats();
+    
     form.addEventListener('submit', e => {
       e.preventDefault();
       const desc=form.description.value.trim();
       const amt=parseFloat(form.amount.value);
+      const paidBy=form.paidBy.value.trim();
       const participants=form.participants.value.split(',').map(s=>s.trim()).filter(Boolean);
-      if(!desc||!isFinite(amt)||amt<=0||participants.length===0){return;}
-      expenses.push({id:uid(), desc, amt, participants, date:Date.now()});
+      if(!desc||!isFinite(amt)||amt<=0||!paidBy||participants.length===0){return;}
+      expenses.push({id:uid(), desc, amt, paidBy, participants, date:Date.now()});
       setJSON('cohabit_expenses', expenses);
       form.reset();
       render();
+      updateStats();
     });
+    
     function render(){
-      tbody.innerHTML='';
+      // Render expenses
+      if(expenses.length === 0){
+        expenseList.innerHTML=`
+          <div class="empty-state">
+            <div class="empty-state-icon">💸</div>
+            <h5>No expenses yet</h5>
+            <p>Add your first expense to get started</p>
+          </div>
+        `;
+      } else {
+        expenseList.innerHTML = expenses.map(exp => {
+          const share = exp.amt / exp.participants.length;
+          return `
+            <div class="expense-card">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h6 class="mb-1">${escape(exp.desc)}</h6>
+                  <small class="text-muted">Paid by ${escape(exp.paidBy)}</small>
+                </div>
+                <div class="expense-amount">$${exp.amt.toFixed(2)}</div>
+              </div>
+              <div class="expense-participants">
+                ${exp.participants.map(p => `<span class="participant-badge">${escape(p)}</span>`).join('')}
+              </div>
+              <div class="mt-2 text-muted" style="font-size: 0.85rem;">
+                Each owes: <strong>$${share.toFixed(2)}</strong>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      // Calculate and render balances
       const balances={};
       expenses.forEach(ex => {
-        const share = ex.amt/ex.participants.length;
-        ex.participants.forEach(p => {balances[p]=(balances[p]||0)+share;});
-        const tr=document.createElement('tr');
-        tr.innerHTML=`<td>${escape(ex.desc)}</td><td>$${ex.amt.toFixed(2)}</td><td>${ex.participants.map(escape).join(', ')}</td><td>$${share.toFixed(2)}</td>`;
-        tbody.appendChild(tr);
+        const share = ex.amt / ex.participants.length;
+        
+        if(!balances[ex.paidBy]) balances[ex.paidBy] = 0;
+        balances[ex.paidBy] += ex.amt;
+        
+        ex.participants.forEach(p => {
+          if(!balances[p]) balances[p] = 0;
+          balances[p] -= share;
+        });
       });
-      balanceList.innerHTML='';
-      Object.keys(balances).forEach(name => {
-        const div=document.createElement('div');div.className='col-sm-6 col-lg-4';
-        div.innerHTML=`<div class='balance-box'><strong>${escape(name)}</strong><br><span class='text-muted'>Owes</span> $${balances[name].toFixed(2)}</div>`;
-        balanceList.appendChild(div);
-      });
+      
+      const balanceEntries = Object.entries(balances);
+      
+      if(balanceEntries.length === 0){
+        balanceList.innerHTML=`
+          <div class="empty-state">
+            <div class="empty-state-icon">💰</div>
+            <p>Balances will appear here</p>
+          </div>
+        `;
+      } else {
+        balanceList.innerHTML = balanceEntries.map(([name, bal]) => {
+          const isPositive = bal > 0.01;
+          const isNegative = bal < -0.01;
+          const statusClass = isPositive ? 'positive' : isNegative ? 'negative' : '';
+          const statusText = isPositive ? 'Is owed' : isNegative ? 'Owes' : 'Settled';
+          
+          return `
+            <div class="balance-card ${statusClass} mb-3">
+              <div class="balance-name">${escape(name)}</div>
+              <div class="balance-amount ${statusClass}">$${Math.abs(bal).toFixed(2)}</div>
+              <small class="text-muted">${statusText}</small>
+            </div>
+          `;
+        }).join('');
+      }
+      
       setJSON('cohabit_balances_cache', balances);
+    }
+    
+    function updateStats(){
+      const total = expenses.reduce((sum, exp) => sum + exp.amt, 0);
+      const participants = new Set(expenses.flatMap(exp => [exp.paidBy, ...exp.participants]));
+      
+      const totalEl = document.getElementById('totalExpenses');
+      const countEl = document.getElementById('expenseCount');
+      const participantsEl = document.getElementById('activeParticipants');
+      
+      if(totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+      if(countEl) countEl.textContent = expenses.length;
+      if(participantsEl) participantsEl.textContent = participants.size;
     }
   }
 
