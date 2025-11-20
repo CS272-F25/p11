@@ -21,3 +21,16 @@ footer{color:#334;}
 .chore-rotation-card .list-group-item{font-weight:500}
 .chore-rotation-card .badge{background:var(--brand);}
 .chore-rotation-card .btn{min-width:120px}
+
+/* Dashboard */
+.mini-dashboard-card{max-width:900px}
+.mini-dashboard-card .stat .h4{color:var(--brand);font-weight:700}
+.mini-dashboard-card .stat .small{opacity:.85}
+.dashboard-fullwidth{width:100%;background:transparent;border-bottom:1px solid rgba(0,0,0,0.03)}
+.mini-dashboard-card.fullwidth-card{max-width:1100px}
+.mini-dashboard-card.fullwidth-card .stat .h4{font-size:1.25rem}
+.mini-dashboard-card.fullwidth-card .stat{padding:.25rem 0}
+
+@media (max-width:576px){
+	.mini-dashboard-card.fullwidth-card{padding:.75rem}
+}
