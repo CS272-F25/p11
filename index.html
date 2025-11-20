@@ -10,45 +10,47 @@
 <body>
   <div data-component="navbar" data-page="home"></div>
 
-  <section class="dashboard-fullwidth py-3">
-    <div class="container">
-      <div class="card p-3 mini-dashboard-card fullwidth-card mx-auto">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h2 id="dashboard" class="h5 mb-0">Dashboard</h2>
-          <small class="text-muted">Preview</small>
-        </div>
-        <div class="row text-center gy-2">
-          <div class="col-6 col-sm-3">
-            <div class="stat">
-              <div class="h4 mb-0" id="md-chores">3</div>
-              <div class="small text-muted">upcoming chores</div>
-            </div>
+  
+  <main class="container py-5">
+    <h1 class="mb-3">CoHabit — Roommate management made simple</h1>
+    <p class="lead">A smarter way to share a home — track chores, costs, and everything in between.</p>
+
+    <section class="dashboard-fullwidth py-3">
+      <div class="container">
+        <div class="card p-3 mini-dashboard-card fullwidth-card mx-auto">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 id="dashboard" class="h5 mb-0">Dashboard</h2>
+            <small class="text-muted">Preview</small>
           </div>
-          <div class="col-6 col-sm-3">
-            <div class="stat">
-              <div class="h4 mb-0" id="md-bills">2</div>
-              <div class="small text-muted">bills due</div>
+          <div class="row text-center gy-2">
+            <div class="col-6 col-sm-3">
+              <div class="stat">
+                <div class="h4 mb-0" id="md-chores">3</div>
+                <div class="small text-muted">upcoming chores</div>
+              </div>
             </div>
-          </div>
-          <div class="col-6 col-sm-3">
-            <div class="stat">
-              <div class="h4 mb-0" id="md-completed">4</div>
-              <div class="small text-muted">tasks completed</div>
+            <div class="col-6 col-sm-3">
+              <div class="stat">
+                <div class="h4 mb-0" id="md-bills">2</div>
+                <div class="small text-muted">bills due</div>
+              </div>
             </div>
-          </div>
-          <div class="col-6 col-sm-3">
-            <div class="stat">
-              <div class="h4 mb-0" id="md-issues">1</div>
-              <div class="small text-muted">pending issue</div>
+            <div class="col-6 col-sm-3">
+              <div class="stat">
+                <div class="h4 mb-0" id="md-completed">4</div>
+                <div class="small text-muted">tasks completed</div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-3">
+              <div class="stat">
+                <div class="h4 mb-0" id="md-issues">1</div>
+                <div class="small text-muted">pending issue</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-  <main class="container py-5">
-    <h1 class="mb-3">CoHabit — Roommate management made simple</h1>
-    <p class="lead">A smarter way to share a home — track chores, costs, and everything in between.</p>
+    </section>
 
     <section aria-labelledby="quick-features" class="my-4">
       <h2 id="quick-features">Quick Features</h2>
@@ -77,14 +79,31 @@
       </div>
     </section>
 
-    <section aria-labelledby="chore-rotation" class="my-5">
-      <h2 id="chore-rotation">Chore Rotation Demo</h2>
-      <div class="card p-3 chore-rotation-card">
-        <p class="mb-2">A mini widget that lists common chores and assigns them to roommates. Click <strong>Rotate chores</strong> to shuffle assignments.</p>
-        <ul id="chore-rotation-list" class="list-group mb-3" aria-live="polite"></ul>
-        <div class="d-flex gap-2">
-          <button id="rotate-chores-btn" class="btn btn-outline-primary">Rotate chores</button>
-          <button id="reset-chores-btn" class="btn btn-secondary">Reset</button>
+    <section aria-labelledby="chore-simulator" class="my-5">
+      <h2 id="chore-simulator">Chore Rotation Simulator</h2>
+      <div class="card p-3 chore-simulator-card mx-auto">
+        <p class="mb-2">Interactive Smart Chore Scheduler — enter roommates and chores, then generate a fair rotation. Use the animation to preview Week 1 / Week 2.</p>
+
+        <div class="simulator-inputs row g-2 mb-3">
+          <div class="col-md-6">
+            <label for="sim-roommates" class="form-label">Roommates (comma separated)</label>
+            <input id="sim-roommates" class="form-control" value="Roommate A, Roommate B, Roommate C" aria-describedby="roommate-help">
+            <div id="roommate-help" class="form-text">Add names separated by commas.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="sim-chores" class="form-label">Chores (comma separated)</label>
+            <input id="sim-chores" class="form-control" value="Dishes, Trash, Vacuum, Laundry">
+          </div>
+          <div class="col-12 d-flex gap-2">
+            <button id="sim-generate" class="btn btn-primary">Generate Rotation</button>
+            <button id="sim-reset" class="btn btn-secondary">Reset</button>
+          </div>
+        </div>
+
+        <div class="simulator-results row gy-3" aria-live="polite">
+          <!-- Week cards will be inserted here -->
+          <div class="col-12 col-md-6" id="sim-week-1-wrap"></div>
+          <div class="col-12 col-md-6" id="sim-week-2-wrap"></div>
         </div>
       </div>
     </section>

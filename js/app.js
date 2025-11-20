@@ -6,7 +6,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     initExpenseSplitter(); // existing home demo
-    initChoreRotationDemo();
+    initChoreRotationSimulator();
     initDirectoryPage();
     initFinancePage();
     initChoresPage();
@@ -14,70 +14,123 @@
     initSearchPage();
     initProfilePage();
   });
+  // Chore Rotation Simulator (home page)
+  function initChoreRotationSimulator(){
+    const wrap1 = document.getElementById('sim-week-1-wrap');
+    const wrap2 = document.getElementById('sim-week-2-wrap');
+    const inputRoom = document.getElementById('sim-roommates');
+    const inputChores = document.getElementById('sim-chores');
+    const btnGen = document.getElementById('sim-generate');
+    const btnReset = document.getElementById('sim-reset');
+    if(!wrap1 || !wrap2 || !inputRoom || !inputChores || !btnGen) return;
 
-  // Chore Rotation Demo (home page)
-  function initChoreRotationDemo(){
-    const container = document.getElementById('chore-rotation-list');
-    if(!container) return;
-    const btn = document.getElementById('rotate-chores-btn');
-    const resetBtn = document.getElementById('reset-chores-btn');
-    const defaultChores = ['Dishes','Trash','Vacuum','Laundry'];
     const defaultRoommates = ['Roommate A','Roommate B','Roommate C'];
+    const defaultChores = ['Dishes','Trash','Vacuum','Laundry'];
+    let lastGenerated = null;
 
-    let state = getJSON('cohabit_chore_rotation', {chores: defaultChores, roommates: defaultRoommates, assignments: []});
-    if(!state.assignments || state.assignments.length !== state.chores.length){
-      state.assignments = assign(state.chores, state.roommates);
-      setJSON('cohabit_chore_rotation', state);
+    function parseList(str){
+      return String(str||'').split(',').map(s=>s.trim()).filter(Boolean);
     }
 
-    render();
-
-    btn.addEventListener('click', () => {
-      state.assignments = assign(state.chores, state.roommates);
-      setJSON('cohabit_chore_rotation', state);
-      btn.disabled = true; btn.textContent = 'Rotating…';
-      setTimeout(() => { render(); btn.disabled = false; btn.textContent = 'Rotate chores'; }, 350);
-    });
-
-    resetBtn.addEventListener('click', () => {
-      state = {chores: defaultChores, roommates: defaultRoommates, assignments: assign(defaultChores, defaultRoommates)};
-      setJSON('cohabit_chore_rotation', state);
-      render();
-    });
-
-    function assign(chores, roommates){
-  
-      const pool = shuffle(roommates.slice());
-      const assignments = chores.map((c,i) => pool[i % pool.length]);
-      return assignments;
-    }
-
-    function render(){
-      while(container.firstChild) container.removeChild(container.firstChild);
-      state.chores.forEach((chore, i) => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center chore-item';
-
-        const choreSpan = document.createElement('span');
-        choreSpan.textContent = chore;
-
-        const badge = document.createElement('span');
-        badge.className = 'badge bg-primary rounded-pill';
-        badge.textContent = state.assignments[i] || '—';
-
-        li.appendChild(choreSpan);
-        li.appendChild(badge);
-        container.appendChild(li);
-      });
-    }
-
-    function shuffle(arr){
+ 
+    function shuffleArray(arr){
       for(let i = arr.length - 1; i > 0; i--){
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
       return arr;
     }
+
+    function generateRotation(chores, roommates, weeks=2){
+      const results = [];
+      const attemptsMax = 6;
+      let attempts = 0;
+      do {
+        results.length = 0;
+        for(let w=0; w<weeks; w++){
+          const pool = shuffleArray(roommates.slice());
+          const assignments = chores.map((c,i) => pool[i % Math.max(1,pool.length)] || '—');
+          results.push(assignments);
+        }
+        attempts++;
+   
+      } while(attempts < attemptsMax && lastGenerated && JSON.stringify(results) === JSON.stringify(lastGenerated));
+      lastGenerated = results;
+      return results;
+    }
+
+    function clearWraps(){
+      while(wrap1.firstChild) wrap1.removeChild(wrap1.firstChild);
+      while(wrap2.firstChild) wrap2.removeChild(wrap2.firstChild);
+    }
+
+    function buildWeekCard(title, chores, assignments){
+      const card = document.createElement('div');
+      card.className = 'sim-week-card';
+
+      const label = document.createElement('div');
+      label.className = 'sim-week-label';
+      label.textContent = title;
+      card.appendChild(label);
+
+      const h = document.createElement('h3');
+      h.textContent = title.replace('Rotation','').trim();
+      card.appendChild(h);
+
+      const ul = document.createElement('ul');
+      chores.forEach((ch, i) => {
+        const li = document.createElement('li');
+        const left = document.createElement('span'); left.textContent = ch;
+        const right = document.createElement('strong'); right.textContent = assignments[i] || '—';
+        li.appendChild(left); li.appendChild(right);
+        ul.appendChild(li);
+      });
+      card.appendChild(ul);
+      return card;
+    }
+
+    function renderRotation(weeksData, chores){
+      clearWraps();
+      const card1 = buildWeekCard('Week 1 Rotation', chores, weeksData[0] || []);
+      const card2 = buildWeekCard('Week 2 Rotation', chores, weeksData[1] || []);
+  
+      card1.classList.add('simulator-animate-enter');
+      card2.classList.add('simulator-animate-enter');
+      wrap1.appendChild(card1);
+      wrap2.appendChild(card2);
+    
+      requestAnimationFrame(()=>{
+        setTimeout(()=>card1.classList.add('simulator-animate-active'), 20);
+        setTimeout(()=>card2.classList.add('simulator-animate-active'), 120);
+      });
+    }
+
+   
+    inputRoom.value = defaultRoommates.join(', ');
+    inputChores.value = defaultChores.join(', ');
+  
+    (function initial(){
+      const chores = parseList(inputChores.value) || defaultChores;
+      const roommates = parseList(inputRoom.value) || defaultRoommates;
+      const weeks = generateRotation(chores, roommates, 2);
+      renderRotation(weeks, chores);
+    })();
+
+    btnGen.addEventListener('click', () => {
+      const chores = parseList(inputChores.value);
+      const roommates = parseList(inputRoom.value);
+      const weeks = generateRotation(chores, roommates, 2);
+      renderRotation(weeks, chores);
+    });
+
+
+
+    btnReset.addEventListener('click', () => {
+      inputRoom.value = defaultRoommates.join(', ');
+      inputChores.value = defaultChores.join(', ');
+      const weeks = generateRotation(defaultChores, defaultRoommates, 2);
+      renderRotation(weeks, defaultChores);
+    });
   }
 
   // Home expense splitter

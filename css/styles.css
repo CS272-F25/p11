@@ -34,3 +34,15 @@ footer{color:#334;}
 @media (max-width:576px){
 	.mini-dashboard-card.fullwidth-card{padding:.75rem}
 }
+
+/* Chore Rotation Simulator */
+.chore-simulator-card{max-width:1100px;margin-left:auto;margin-right:auto}
+.chore-simulator-card .simulator-inputs .form-control{min-height:44px}
+.simulator-results .sim-week-card{border-radius:.5rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04);height:100%}
+.sim-week-card h3{font-size:1.05rem;margin-bottom:.5rem}
+.sim-week-card ul{list-style:none;padding:0;margin:0}
+.sim-week-card li{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px dashed rgba(0,0,0,.04)}
+.sim-week-card li:last-child{border-bottom:0}
+.simulator-animate-enter{opacity:0;transform:translateY(8px)}
+.simulator-animate-enter.simulator-animate-active{transition:all .35s cubic-bezier(.2,.9,.2,1);opacity:1;transform:none}
+.sim-week-label{font-size:.85rem;color:var(--muted);margin-bottom:.5rem}
