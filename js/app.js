@@ -12,7 +12,24 @@
     initNotificationsPage();
     initSearchPage();
     initProfilePage();
+    // update dashboard counts on load
+    updateDashboardCounts();
   });
+
+
+  function updateDashboardCounts(){
+    try{
+      const chores = getJSON('cohabit_chores', []);
+      const expenses = getJSON('cohabit_expenses', []);
+      const roommates = getJSON('cohabit_roommates', []);
+      const mdChores = document.getElementById('md-chores');
+      const mdBills = document.getElementById('md-bills');
+      const mdRoommates = document.getElementById('md-roommates');
+      if(mdChores) mdChores.textContent = String(chores.filter(c => !c.done).length);
+      if(mdBills) mdBills.textContent = String(expenses.length);
+      if(mdRoommates) mdRoommates.textContent = String(roommates.length);
+    }catch(e){/* ignore if dashboard not present */}
+  }
 
   // Directory
   function initDirectoryPage(){
@@ -52,6 +69,8 @@
         btn.addEventListener('click', () => {roommates = roommates.filter(x=>x.id!==r.id);setJSON('cohabit_roommates', roommates);render();});
         container.appendChild(col);
       });
+      // update dashboard counts when roommates change
+      updateDashboardCounts();
     }
   }
 
@@ -92,6 +111,8 @@
         balanceList.appendChild(div);
       });
       setJSON('cohabit_balances_cache', balances);
+      // update dashboard counts when expenses change
+      updateDashboardCounts();
     }
   }
 
@@ -127,6 +148,8 @@
         btn.addEventListener('click', ()=>{c.done=!c.done;setJSON('cohabit_chores', chores);render();});
         list.appendChild(col);
       });
+      // update dashboard counts when chores change
+      updateDashboardCounts();
     }
   }
 
