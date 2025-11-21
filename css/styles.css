@@ -15,3 +15,24 @@ footer{color:#334;}
 #balance-list .balance-box{background:#f8f9fa;border:1px solid #e3e5e7;border-radius:.5rem;padding:.75rem}
 #profile-preview .label{font-weight:600;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
 @media (max-width:576px){.navbar-brand{font-size:1rem}}
+
+#chore-history-wrapper {
+  margin-top: 1.5rem;
+}
+
+/* Only on very wide screens do we float it on the side */
+@media (min-width: 1400px) {
+  #chore-history-wrapper {
+    position: fixed;
+    top: 140px;        /* adjust if you want it lower/higher */
+    right: 200px;       /* distance from the right edge */
+    width: 280px;
+    z-index: 1030;
+    margin-top: 0;
+  }
+
+  /* add padding so the list doesn't go under the panel */
+  #chores-page {
+    padding-right: 320px;  /* slightly bigger than width above */
+  }
+}
