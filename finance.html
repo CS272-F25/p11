@@ -9,42 +9,173 @@
 </head>
 <body>
   <div data-component="navbar" data-page="finance"></div>
-  <main class="container py-5" id="finance-page">
-    <h1 class="mb-4">Finance Module</h1>
-    <p class="mb-4">Track shared expenses, split costs, and view outstanding balances.</p>
-    <form id="expense-form" class="row g-3" novalidate>
-      <div class="col-md-4">
-        <label for="exDesc" class="form-label">Description</label>
-        <input id="exDesc" name="description" class="form-control" required>
+  
+  <div class="page-header">
+    <div class="container">
+      <h1>💰 Finance Module</h1>
+      <p>Track shared expenses, split costs, and view outstanding balances</p>
+    </div>
+  </div>
+
+  <main class="container pb-5" id="finance-page">
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalExpenses">$0.00</div>
+        <div class="stat-label">Total Expenses</div>
       </div>
-      <div class="col-md-4">
-        <label for="exAmount" class="form-label">Amount ($)</label>
-        <input id="exAmount" name="amount" type="number" step="0.01" class="form-control" required>
+      <div class="stat-card">
+        <div class="stat-value" id="expenseCount">0</div>
+        <div class="stat-label">Transactions</div>
       </div>
-      <div class="col-md-4">
-        <label for="exParticipants" class="form-label">Participants (comma separated)</label>
-        <input id="exParticipants" name="participants" class="form-control" placeholder="Alice, Ben" required>
+      <div class="stat-card">
+        <div class="stat-value" id="activeParticipants">0</div>
+        <div class="stat-label">Active Members</div>
       </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row mb-4">
+      <div class="col-lg-6 mb-4">
+        <div class="card-custom">
+          <div class="card-header-custom">
+            📊 Expense Breakdown
+          </div>
+          <div class="card-body p-4">
+            <canvas id="expenseChart" height="250"></canvas>
+            <div id="expenseChartEmpty" class="empty-state">
+              <div class="empty-state-icon">📊</div>
+              <p>Chart will appear after adding expenses</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-4">
+        <div class="card-custom">
+          <div class="card-header-custom">
+            💹 Balance Overview
+          </div>
+          <div class="card-body p-4">
+            <canvas id="balanceChart" height="250"></canvas>
+            <div id="balanceChartEmpty" class="empty-state">
+              <div class="empty-state-icon">💹</div>
+              <p>Chart will appear after adding expenses</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Expense Form -->
+    <div class="card-custom mb-4">
+      <div class="card-header-custom">
+        ➕ Add New Expense
+      </div>
+      <div class="card-body p-4">
+        <form id="expense-form" class="row g-3" novalidate>
+          <div class="col-md-6">
+            <label for="exDesc" class="form-label">Description</label>
+            <input id="exDesc" name="description" class="form-control" placeholder="e.g., Groceries, Utilities" required>
+          </div>
+          <div class="col-md-3">
+            <label for="exAmount" class="form-label">Amount ($)</label>
+            <input id="exAmount" name="amount" type="number" step="0.01" class="form-control" placeholder="0.00" required>
+          </div>
+          <div class="col-md-3">
+            <label for="exPaidBy" class="form-label">Paid By</label>
+            <input id="exPaidBy" name="paidBy" class="form-control" placeholder="Name" required>
+          </div>
+          <div class="col-md-9">
+            <label for="exParticipants" class="form-label">Participants (comma separated)</label>
+            <input id="exParticipants" name="participants" class="form-control" placeholder="Alice, Ben, Charlie" required>
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary-custom w-100" type="submit">Add Expense</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Recent Expenses -->
+      <div class="col-lg-7 mb-4">
+        <div class="card-custom">
+          <div class="card-header-custom">
+            📋 Recent Expenses
+          </div>
+          <div class="card-body p-4">
+            <div id="expense-list">
+              <div class="empty-state">
+                <div class="empty-state-icon">💸</div>
+                <h5>No expenses yet</h5>
+                <p>Add your first expense to get started</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balances -->
+      <div class="col-lg-5 mb-4">
+        <div class="card-custom">
+          <div class="card-header-custom">
+            ⚖️ Balances
+          </div>
+          <div class="card-body p-4">
+            <div id="balance-list">
+              <div class="empty-state">
+                <div class="empty-state-icon">💰</div>
+                <p>Balances will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="row mb-4">
       <div class="col-12">
-        <button class="btn btn-success" type="submit">Add Expense</button>
+        <div class="card-custom">
+          <div class="card-header-custom">
+            🕐 Recent Transactions
+          </div>
+          <div class="card-body p-4">
+            <div id="transactions-list">
+              <div class="empty-state">
+                <div class="empty-state-icon">📜</div>
+                <p>Transaction history will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </form>
-    <section class="mt-5" aria-labelledby="expenseListHeading">
-      <h2 id="expenseListHeading">Expenses</h2>
-      <table class="table table-bordered table-sm align-middle" id="expense-table">
-        <thead class="table-light">
-          <tr><th scope="col">Description</th><th scope="col">Amount</th><th scope="col">Participants</th><th scope="col">Each Owes</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-    <section class="mt-4" aria-labelledby="balanceHeading">
-      <h2 id="balanceHeading">Balances</h2>
-      <div id="balance-list" class="row g-2" aria-live="polite"></div>
-    </section>
+    </div>
+
+    <!-- Who Owes Who Section -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card-custom">
+          <div class="card-header-custom">
+            🔄 Payment Settlements
+          </div>
+          <div class="card-body p-4">
+            <div id="settlements-list">
+              <div class="empty-state">
+                <div class="empty-state-icon">💸</div>
+                <p>Payment recommendations will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
+  
   <div data-component="footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="/js/components.js"></script>
   <script src="/js/app.js"></script>
 </body>

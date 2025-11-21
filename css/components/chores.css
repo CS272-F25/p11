@@ -1,0 +1,9 @@
+/* Chores Component Styles */
+.card.chore-card {
+  border-left: 6px solid var(--brand);
+}
+
+.card.chore-card.done {
+  opacity: 0.6;
+  border-left-color: var(--success);
+}
