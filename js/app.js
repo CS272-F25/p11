@@ -5,33 +5,30 @@
   const setJSON = (key, value) => {try{ls.setItem(key, JSON.stringify(value));}catch(e){}}
 
   document.addEventListener('DOMContentLoaded', () => {
-    initExpenseSplitter(); // existing home demo
+   
     initDirectoryPage();
     initFinancePage();
     initChoresPage();
     initNotificationsPage();
     initSearchPage();
     initProfilePage();
+    // update dashboard counts on load
+    updateDashboardCounts();
   });
 
-  // Home expense splitter
-  function initExpenseSplitter(){
-    const form = document.getElementById('split-form');
-    const result = document.getElementById('split-result');
-    if(!form || !result) return;
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const total = parseFloat(form.total.value);
-      const count = parseInt(form.count.value,10);
-      if(!isFinite(total)||total<=0||!isFinite(count)||count<1){
-        result.textContent='Enter a valid total and roommate count.';
-        result.className='text-danger';
-        return;
-      }
-      const share = Math.round((total/count)*100)/100;
-      result.className='text-success';
-      result.textContent=`Each pays $${share.toFixed(2)} (total $${total.toFixed(2)} split ${count}).`;
-    });
+
+  function updateDashboardCounts(){
+    try{
+      const chores = getJSON('cohabit_chores', []);
+      const expenses = getJSON('cohabit_expenses', []);
+      const roommates = getJSON('cohabit_roommates', []);
+      const mdChores = document.getElementById('md-chores');
+      const mdBills = document.getElementById('md-bills');
+      const mdRoommates = document.getElementById('md-roommates');
+      if(mdChores) mdChores.textContent = String(chores.filter(c => !c.done).length);
+      if(mdBills) mdBills.textContent = String(expenses.length);
+      if(mdRoommates) mdRoommates.textContent = String(roommates.length);
+    }catch(e){/* ignore if dashboard not present */}
   }
 
   // Directory
@@ -72,6 +69,8 @@
         btn.addEventListener('click', () => {roommates = roommates.filter(x=>x.id!==r.id);setJSON('cohabit_roommates', roommates);render();});
         container.appendChild(col);
       });
+      // update dashboard counts when roommates change
+      updateDashboardCounts();
     }
   }
 
@@ -207,6 +206,8 @@
       }
       
       setJSON('cohabit_balances_cache', balances);
+      // update dashboard counts when expenses change
+      updateDashboardCounts();
     }
     
     function renderSettlements(){
@@ -561,6 +562,8 @@
         btn.addEventListener('click', ()=>{c.done=!c.done;setJSON('cohabit_chores', chores);render();});
         list.appendChild(col);
       });
+      // update dashboard counts when chores change
+      updateDashboardCounts();
     }
   }
 
