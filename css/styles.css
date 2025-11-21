@@ -1,38 +1,16 @@
-:root{--brand:#0d6efd;--muted:#6c757d;--danger:#dc3545;--success:#198754;--bg:#ffffff;}
-body{background:var(--bg);color:#212529;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
-.site-header{border-bottom:4px solid rgba(0,0,0,.03)}
-main h2{color:var(--brand);margin-top:1.25rem}
-main p{line-height:1.6}
-:focus{outline:3px solid rgba(13,110,253,.35);outline-offset:2px}
-.profile-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:2px solid rgba(255,255,255,.3);display:inline-block;vertical-align:middle}
-footer{color:#334;}
-.badge-tag{background:var(--brand);color:#fff;border-radius:.35rem;padding:.35em .6em;font-size:.65rem;letter-spacing:.5px;margin:.15rem .25rem .15rem 0;display:inline-block}
-.card.roommate-card{min-height:140px}
-.card.chore-card{border-left:6px solid var(--brand)}
-.card.chore-card.done{opacity:.6;border-left-color:var(--success)}
-.notification-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem;border:1px solid #e5e7eb;border-radius:.5rem;background:#f8f9fa;margin-bottom:.5rem}
-.notification-item .icon{font-size:1.25rem}
-#balance-list .balance-box{background:#f8f9fa;border:1px solid #e3e5e7;border-radius:.5rem;padding:.75rem}
-#profile-preview .label{font-weight:600;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
-@media (max-width:576px){.navbar-brand{font-size:1rem}}
+/* Main Stylesheet - CoHabit */
+/* This file imports all component-specific stylesheets */
 
-#chore-history-wrapper {
-  margin-top: 1.5rem;
-}
+/* Core Styles */
+@import url('variables.css');
+@import url('base.css');
 
-/* Only on very wide screens do we float it on the side */
-@media (min-width: 1400px) {
-  #chore-history-wrapper {
-    position: fixed;
-    top: 140px;        /* adjust if you want it lower/higher */
-    right: 200px;       /* distance from the right edge */
-    width: 280px;
-    z-index: 1030;
-    margin-top: 0;
-  }
-
-  /* add padding so the list doesn't go under the panel */
-  #chores-page {
-    padding-right: 320px;  /* slightly bigger than width above */
-  }
-}
+/* Component Styles */
+@import url('components/navbar.css');
+@import url('components/forms.css');
+@import url('components/cards.css');
+@import url('components/profile.css');
+@import url('components/directory.css');
+@import url('components/chores.css');
+@import url('components/notifications.css');
+@import url('components/finance.css');

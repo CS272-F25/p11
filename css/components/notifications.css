@@ -1,0 +1,15 @@
+/* Notifications Component Styles */
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #f8f9fa;
+  margin-bottom: 0.5rem;
+}
+
+.notification-item .icon {
+  font-size: 1.25rem;
+}
