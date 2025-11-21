@@ -1,0 +1,18 @@
+/* Profile Component Styles */
+.profile-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#profile-preview .label {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

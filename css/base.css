@@ -1,0 +1,24 @@
+/* Base Styles */
+body {
+  background: var(--bg);
+  color: #212529;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+main h2 {
+  color: var(--brand);
+  margin-top: 1.25rem;
+}
+
+main p {
+  line-height: 1.6;
+}
+
+:focus {
+  outline: 3px solid rgba(13, 110, 253, 0.35);
+  outline-offset: 2px;
+}
+
+footer {
+  color: #334;
+}

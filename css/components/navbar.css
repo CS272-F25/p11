@@ -1,0 +1,10 @@
+/* Navbar Component Styles */
+.site-header {
+  border-bottom: 4px solid rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1rem;
+  }
+}

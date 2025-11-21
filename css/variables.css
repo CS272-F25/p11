@@ -1,0 +1,26 @@
+/* CSS Custom Properties / Variables */
+:root {
+  /* Brand Colors */
+  --brand: #0d6efd;
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --secondary: #6366f1;
+  
+  /* Semantic Colors */
+  --success: #198754;
+  --danger: #dc3545;
+  --warning: #f59e0b;
+  --muted: #6c757d;
+  
+  /* Background Colors */
+  --bg: #ffffff;
+  --bg-light: #f8fafc;
+  --bg-card: #ffffff;
+  
+  /* Text Colors */
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  
+  /* Borders */
+  --border: #e2e8f0;
+}

@@ -1,0 +1,15 @@
+/* Directory Component Styles */
+.badge-tag {
+  background: var(--brand);
+  color: #fff;
+  border-radius: 0.35rem;
+  padding: 0.35em 0.6em;
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  margin: 0.15rem 0.25rem 0.15rem 0;
+  display: inline-block;
+}
+
+.card.roommate-card {
+  min-height: 140px;
+}
