@@ -9,5 +9,6 @@
     if(C.initNotificationsPage) C.initNotificationsPage();
     if(C.initSearchPage) C.initSearchPage();
     if(C.initProfilePage) C.initProfilePage();
+    if(C.initHouseholdPage) C.initHouseholdPage();
   });
 })();

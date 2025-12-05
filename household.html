@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Household - Cohabit</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components/navbar.css">
+  <link rel="stylesheet" href="css/components/cards.css">
+  <link rel="stylesheet" href="css/components/forms.css">
+</head>
+<body>
+  <div id="navbar-container"></div>
+
+  <main class="container">
+    <div id="household-page">
+      <h1>My Household</h1>
+
+      <!-- No Household State -->
+      <div id="no-household-state" style="display: none;">
+        <div class="card p-4 mb-4">
+          <h2 class="h4 mb-3">You're not in a household yet</h2>
+          <p class="mb-4">Create a new household or join an existing one to get started.</p>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="card p-3 h-100">
+                <h3 class="h5 mb-3">Create New Household</h3>
+                <form id="create-household-form">
+                  <div class="mb-3">
+                    <label for="household-name" class="form-label">Household Name</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="household-name" 
+                      name="name"
+                      placeholder="e.g., 123 Main St Apartment"
+                      required>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Create Household</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="card p-3 h-100">
+                <h3 class="h5 mb-3">Join Existing Household</h3>
+                <form id="join-household-form">
+                  <div class="mb-3">
+                    <label for="invite-code" class="form-label">Invite Code</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="invite-code" 
+                      name="inviteCode"
+                      placeholder="Enter 6-character code"
+                      maxlength="6"
+                      style="text-transform: uppercase;"
+                      required>
+                  </div>
+                  <button type="submit" class="btn btn-success w-100">Join Household</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Has Household State -->
+      <div id="has-household-state" style="display: none;">
+        <!-- Household Info -->
+        <div class="card p-4 mb-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h2 class="h4 mb-2" id="household-name-display">Loading...</h2>
+              <p class="text-muted mb-0">
+                <span id="member-count">0</span> member(s)
+              </p>
+            </div>
+            <button id="settings-btn" class="btn btn-sm btn-outline-secondary">Settings</button>
+          </div>
+
+          <div id="household-settings" style="display: none;">
+            <hr>
+            <div class="mb-3">
+              <h3 class="h6 mb-2">Invite Code</h3>
+              <div class="d-flex gap-2">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="invite-code-display" 
+                  readonly
+                  style="font-family: monospace; font-size: 1.2em; letter-spacing: 2px;">
+                <button id="copy-invite-btn" class="btn btn-outline-primary">Copy</button>
+                <button id="regenerate-invite-btn" class="btn btn-outline-secondary">Regenerate</button>
+              </div>
+              <small class="text-muted">Share this code with others to invite them to your household</small>
+            </div>
+
+            <div class="mb-3">
+              <h3 class="h6 mb-2">Update Household Name</h3>
+              <form id="update-household-form" class="d-flex gap-2">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="update-household-name" 
+                  name="name"
+                  required>
+                <button type="submit" class="btn btn-primary">Update</button>
+              </form>
+            </div>
+
+            <div>
+              <button id="leave-household-btn" class="btn btn-danger">Leave Household</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Members List -->
+        <div class="card p-4">
+          <h2 class="h5 mb-3">Household Members</h2>
+          <div id="members-loading" class="text-center py-4">
+            <p>Loading members...</p>
+          </div>
+          <div id="members-list" class="row"></div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="text-center py-5">
+        <p>Loading household information...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="error-state" class="alert alert-danger" style="display: none;" role="alert">
+        <strong>Error:</strong> <span id="error-message"></span>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script type="module" src="js/components.js"></script>
+  <script type="module" src="js/pages/household.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is household member
+    function isHouseholdMember(householdId) {
+      return isSignedIn() && 
+             request.auth.uid in get(/databases/$(database)/documents/households/$(householdId)).data.members;
+    }
+    
+    // Users collection - users can read all profiles but only write their own
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Households collection
+    match /households/{householdId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.members;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.createdBy;
+      allow update: if isSignedIn() && request.auth.uid in resource.data.members;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.createdBy;
+    }
+    
+    // Chores collection - only household members can access
+    match /chores/{choreId} {
+      allow read: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+      allow create: if isSignedIn() && isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+    }
+    
+    // Expenses collection - only household members can access
+    match /expenses/{expenseId} {
+      allow read: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+      allow create: if isSignedIn() && isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+    }
+    
+    // Settlements collection - only household members can access
+    match /settlements/{settlementId} {
+      allow read: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+      allow create: if isSignedIn() && isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+    }
+    
+    // Roommates collection - public read for directory, authenticated write
+    match /roommates/{roommateId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && 
+        (request.auth.uid == resource.data.createdBy || 
+         resource.data.email == request.auth.token.email);
+    }
+    
+    // Notifications collection - users can only access their own notifications
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+    
+    // Transactions collection - only household members can access
+    match /transactions/{transactionId} {
+      allow read: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+      allow create: if isSignedIn() && isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isSignedIn() && isHouseholdMember(resource.data.householdId);
+    }
+  }
+}

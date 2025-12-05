@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login • Cohabit</title>
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/components/forms.css" />
+</head>
+<body>
+  <div id="app">
+    <main class="container" style="max-width: 520px; margin: 2rem auto;">
+      <!-- Login Form -->
+      <div id="login-view">
+        <h1>Welcome back</h1>
+        <p>Sign in with your email and password.</p>
+
+        <form id="login-form" class="card" style="padding: 1.5rem;">
+          <div class="form-group mb-3">
+            <label for="login-email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="login-email" name="email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="login-password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="login-password" name="password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="login-btn">Sign In</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <p class="mb-2">Don't have an account?</p>
+          <button class="btn btn-outline-primary" id="show-signup-btn">Create Account</button>
+        </div>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signup-view" style="display: none;">
+        <h1>Create Account</h1>
+        <p>Fill in your details to get started with Cohabit.</p>
+
+        <form id="signup-form" class="card" style="padding: 1.5rem;">
+          <div class="form-group mb-3">
+            <label for="signup-name" class="form-label">Full Name *</label>
+            <input type="text" class="form-control" id="signup-name" name="name" required placeholder="John Doe" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="signup-email" class="form-label">Email *</label>
+            <input type="email" class="form-control" id="signup-email" name="email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="signup-password" class="form-label">Password *</label>
+            <input type="password" class="form-control" id="signup-password" name="password" required minlength="6" placeholder="At least 6 characters" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="signup-habits" class="form-label">Living Habits</label>
+            <textarea class="form-control" id="signup-habits" name="habits" rows="2" placeholder="e.g., Early riser, enjoys cooking, quiet environment"></textarea>
+            <small class="text-muted">Tell your future roommates about your lifestyle</small>
+          </div>
+          <div class="form-group mb-3">
+            <label for="signup-noise" class="form-label">Noise Preference</label>
+            <select class="form-control" id="signup-noise" name="noise">
+              <option value="quiet">Quiet</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="loud">Loud</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label for="signup-availability" class="form-label">Availability</label>
+            <select class="form-control" id="signup-availability" name="availability">
+              <option value="immediate">Immediate</option>
+              <option value="flexible" selected>Flexible</option>
+              <option value="next-month">Next Month</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="signup-btn">Create Account</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <p class="mb-2">Already have an account?</p>
+          <button class="btn btn-outline-secondary" id="show-login-btn">Back to Sign In</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <p id="auth-message" class="text-center mt-3" style="min-height: 1.5rem;"></p>
+    </main>
+  </div>
+
+  <script type="module" src="/firebase.js"></script>
+  <script type="module" src="/js/pages/login.js"></script>
+</body>
+</html>
