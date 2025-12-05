@@ -1,18 +1,61 @@
 /* Profile Component Styles */
 .profile-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: var(--gradient-hero);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   display: inline-block;
   vertical-align: middle;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow);
 }
 
 #profile-preview .label {
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* Profile Page Header */
+.profile-header {
+  background: var(--gradient-hero);
+  color: white;
+  padding: 3rem 2rem;
+  margin-bottom: 3rem;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.profile-header h1 {
+  font-weight: 800;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.profile-header p {
+  opacity: 0.95;
+  font-size: 1.1rem;
+}
+
+/* Profile Card */
+.profile-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }

@@ -10,11 +10,10 @@
 @import url('components/forms.css');
 @import url('components/cards.css');
 @import url('components/home.css');
+@import url('components/about.css');
+@import url('components/household.css');
 @import url('components/profile.css');
 @import url('components/directory.css');
 @import url('components/chores.css');
 @import url('components/notifications.css');
 @import url('components/finance.css');
-
-/*Chore Management Page Styles*/    
-@import url('components/chores.css');

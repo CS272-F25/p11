@@ -1,23 +1,41 @@
 /* Card Component Styles */
 .card-custom {
-  background: var(--bg-card);
+  background: white;
   border: none;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
 .card-custom:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header-custom {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--gradient-purple);
   color: white;
-  padding: 1.25rem 1.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
+  padding: 1.5rem 1.75rem;
+  font-weight: 700;
+  font-size: 1.15rem;
   border: none;
+}
+
+/* Card variants */
+.card-custom.card-success .card-header-custom {
+  background: var(--gradient-success);
+}
+
+.card-custom.card-warning .card-header-custom {
+  background: var(--gradient-warning);
+}
+
+.card-custom.card-info .card-header-custom {
+  background: var(--gradient-info);
+}
+
+/* Card body */
+.card-custom .card-body {
+  padding: 1.5rem;
 }

@@ -1,6 +1,36 @@
 /* Navbar Component Styles */
 .site-header {
-  border-bottom: 4px solid rgba(0, 0, 0, 0.03);
+  background: white !important;
+  border-bottom: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+  font-weight: 800 !important;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.5rem !important;
+}
+
+.navbar .nav-link {
+  font-weight: 600 !important;
+  color: var(--text-dark) !important;
+  transition: all 0.2s ease !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--radius-sm);
+}
+
+.navbar .nav-link:hover {
+  background: rgba(99, 102, 241, 0.1) !important;
+  color: var(--brand) !important;
+}
+
+.navbar .nav-link.active {
+  background: var(--gradient-purple) !important;
+  color: white !important;
 }
 
 /* Household Selector */
@@ -8,17 +38,58 @@
   min-width: 150px;
   text-align: left;
   font-size: 0.9rem;
-  border-width: 1px;
+  background: rgba(99, 102, 241, 0.1) !important;
+  border: 2px solid rgba(99, 102, 241, 0.3) !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 600 !important;
+  color: var(--brand) !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+#household-selector .btn:hover {
+  border-color: var(--brand) !important;
+  background: rgba(99, 102, 241, 0.2) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2) !important;
 }
 
 #household-selector .dropdown-menu {
-  min-width: 200px;
+  min-width: 220px;
+  border: 2px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  background: white !important;
+  padding: 0.5rem;
+}
+
+#household-selector .dropdown-item {
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  border-radius: var(--radius-sm);
+  color: var(--text-dark) !important;
+}
+
+#household-selector .dropdown-item:hover {
+  background: rgba(99, 102, 241, 0.1) !important;
+  color: var(--brand) !important;
 }
 
 #household-selector .dropdown-item.active {
-  background-color: var(--bs-primary);
-  color: white;
-  font-weight: 500;
+  background: var(--gradient-purple) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+#household-selector .dropdown-divider {
+  border-top-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Add household button in dropdown */
+#household-selector .dropdown-item-text {
+  color: var(--text-muted) !important;
+  font-size: 0.85rem;
 }
 
 @media (max-width: 991px) {

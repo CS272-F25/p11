@@ -1,0 +1,224 @@
+/* About Page Styles */
+
+/* Main Container */
+main.container {
+  max-width: 900px;
+}
+
+/* Hero Title */
+body[data-page="about"] h1,
+main h1:first-child {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-size: 3rem;
+  margin-bottom: 3rem !important;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Section Styling */
+main section {
+  background: white;
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem !important;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-out;
+}
+
+main section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--gradient-purple);
+}
+
+main section:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Section with different accent colors */
+main section:nth-child(1)::before {
+  background: var(--gradient-hero);
+}
+
+main section:nth-child(2)::before {
+  background: var(--gradient-success);
+}
+
+main section:nth-child(3)::before {
+  background: var(--gradient-info);
+}
+
+main section:nth-child(4)::before {
+  background: var(--gradient-warning);
+}
+
+main section:nth-child(5)::before {
+  background: var(--gradient-purple);
+}
+
+/* Section Headings */
+main section h2 {
+  color: var(--text-dark);
+  font-weight: 800;
+  font-size: 1.75rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+main section h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 4px;
+  background: var(--gradient-purple);
+  border-radius: 2px;
+}
+
+main section:nth-child(1) h2::after {
+  background: var(--gradient-hero);
+}
+
+main section:nth-child(2) h2::after {
+  background: var(--gradient-success);
+}
+
+main section:nth-child(3) h2::after {
+  background: var(--gradient-info);
+}
+
+main section:nth-child(4) h2::after {
+  background: var(--gradient-warning);
+}
+
+main section:nth-child(5) h2::after {
+  background: var(--gradient-purple);
+}
+
+/* Paragraphs */
+main section p {
+  color: var(--text-dark);
+  line-height: 1.8;
+  font-size: 1.05rem;
+  margin-bottom: 1.25rem;
+}
+
+main section p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lists */
+main section ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
+
+main section li {
+  color: var(--text-dark);
+  line-height: 1.8;
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+  position: relative;
+}
+
+main section li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  background: var(--gradient-success);
+  color: white;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+}
+
+main section:nth-child(3) li::before {
+  background: var(--gradient-info);
+}
+
+main section:nth-child(4) li::before {
+  background: var(--gradient-warning);
+}
+
+/* Strong tags */
+main section strong {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation for sections */
+main section:nth-child(1) {
+  animation-delay: 0s;
+}
+
+main section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+main section:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+main section:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+main section:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body[data-page="about"] h1,
+  main h1:first-child {
+    font-size: 2.25rem;
+  }
+  
+  main section {
+    padding: 1.75rem;
+  }
+  
+  main section h2 {
+    font-size: 1.5rem;
+  }
+  
+  main section p,
+  main section li {
+    font-size: 1rem;
+  }
+}
