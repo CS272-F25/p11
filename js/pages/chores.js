@@ -3,12 +3,22 @@ import {
   createChore, 
   getHouseholdChores, 
   toggleChoreCompletion,
-  deleteCompletedChores
+  deleteCompletedChores,
+  updateChore
 } from '../utils/chores.js';
 import { 
   getCurrentUserHousehold, 
   getHouseholdMembers 
 } from '../utils/household.js';
+import {
+  initGoogleCalendar,
+  requestCalendarAuthorization,
+  isAuthorized,
+  signOutCalendar,
+  syncChoreToCalendar,
+  deleteCalendarEvent,
+  getConnectionStatus
+} from '../utils/calendar.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 (function(){
@@ -26,10 +36,18 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
     const clearBtn = document.getElementById('clear-chores');
     const assigneeSelect = document.getElementById('chore-assignee');
     const congratsModal = new bootstrap.Modal(document.getElementById('choresCongratsModal'));
+    const calendarConnectBtn = document.getElementById('calendar-connect-btn');
+    const calendarStatusText = document.getElementById('calendar-status-text');
+    const calendarBanner = document.getElementById('calendar-banner');
+    const syncToCalendarCheckbox = document.getElementById('sync-to-calendar');
 
     let currentHousehold = null;
     let householdMembers = [];
     let chores = [];
+    let calendarInitialized = false;
+
+    // Initialize Google Calendar API
+    initializeCalendar();
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -42,6 +60,59 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
         }
       } else {
         window.location.href = '/login.html';
+      }
+    });
+
+    async function initializeCalendar() {
+      try {
+        await initGoogleCalendar();
+        calendarInitialized = true;
+        updateCalendarUI();
+      } catch (error) {
+        console.error('Error initializing Google Calendar:', error);
+        calendarStatusText.textContent = 'Failed to initialize calendar integration.';
+      }
+    }
+
+    function updateCalendarUI() {
+      const status = getConnectionStatus();
+      
+      if (isAuthorized()) {
+        calendarStatusText.textContent = '✓ Connected to Google Calendar';
+        calendarConnectBtn.textContent = 'Disconnect';
+        calendarConnectBtn.classList.remove('btn-primary');
+        calendarConnectBtn.classList.add('btn-outline-secondary');
+        syncToCalendarCheckbox.disabled = false;
+      } else {
+        calendarStatusText.textContent = 'Connect your Google Calendar to sync chores automatically.';
+        calendarConnectBtn.textContent = 'Connect Calendar';
+        calendarConnectBtn.classList.remove('btn-outline-secondary');
+        calendarConnectBtn.classList.add('btn-primary');
+        syncToCalendarCheckbox.disabled = true;
+        syncToCalendarCheckbox.checked = false;
+      }
+    }
+
+    calendarConnectBtn.addEventListener('click', async () => {
+      if (isAuthorized()) {
+        // Disconnect
+        signOutCalendar();
+        updateCalendarUI();
+        showSuccess('Disconnected from Google Calendar');
+      } else {
+        // Connect
+        try {
+          calendarConnectBtn.disabled = true;
+          calendarConnectBtn.textContent = 'Connecting...';
+          await requestCalendarAuthorization();
+          updateCalendarUI();
+          showSuccess('Successfully connected to Google Calendar!');
+        } catch (error) {
+          console.error('Error connecting to Google Calendar:', error);
+          showError('Failed to connect to Google Calendar. Please try again.');
+        } finally {
+          calendarConnectBtn.disabled = false;
+        }
       }
     });
 
@@ -119,15 +190,32 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
         submitBtn.textContent = 'Adding...';
 
         const assigneeMember = householdMembers.find(m => m.uid === assigneeId);
+        const shouldSyncCalendar = syncToCalendarCheckbox.checked && isAuthorized();
         
-        await createChore({
+        const choreData = {
           name,
           assigneeId,
           assigneeName: assigneeMember ? assigneeMember.displayName : '',
           frequency,
           dueDate,
           householdId: currentHousehold.id
-        });
+        };
+
+        const choreId = await createChore(choreData);
+
+        // Sync to Google Calendar if requested
+        if (shouldSyncCalendar) {
+          try {
+            submitBtn.textContent = 'Syncing to calendar...';
+            const eventId = await syncChoreToCalendar({ ...choreData, id: choreId });
+            // Update chore with calendar event ID
+            await updateChore(choreId, { calendarEventId: eventId });
+            showSuccess('Chore added and synced to Google Calendar!');
+          } catch (calError) {
+            console.error('Error syncing to calendar:', calError);
+            showError('Chore added but failed to sync to calendar.');
+          }
+        }
 
         form.reset();
         await loadChores();
@@ -192,33 +280,72 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
       
       const isOverdue = !chore.done && chore.dueDate < new Date().toISOString().split('T')[0];
       const statusClass = chore.done ? 'done' : (isOverdue ? 'overdue' : '');
+      const calendarIcon = chore.calendarEventId ? '📅' : '';
       
       col.innerHTML = `
         <div class='card chore-card p-3 ${statusClass}' data-id='${chore.id}'>
-          <h3 class='h5 mb-2'>${esc(chore.name)}</h3>
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class='h5 mb-0'>${esc(chore.name)}</h3>
+            ${calendarIcon ? '<span class="badge bg-info">'+calendarIcon+'</span>' : ''}
+          </div>
           <p class='mb-2 small'>
             <strong>👤 ${esc(chore.assigneeName || 'Unassigned')}</strong><br>
             📅 ${esc(chore.frequency)} • Due ${formatDate(chore.dueDate)}
             ${isOverdue ? '<br><span class="text-danger">⚠️ Overdue</span>' : ''}
           </p>
-          <button class='btn btn-sm w-100 ${chore.done ? 'btn-outline-secondary' : 'btn-success'}'>
-            ${chore.done ? '↩️ Mark Incomplete' : '✓ Mark Done'}
-          </button>
+          <div class="d-flex gap-2">
+            <button class='btn btn-sm flex-grow-1 mark-btn ${chore.done ? 'btn-outline-secondary' : 'btn-success'}'>
+              ${chore.done ? '↩️ Mark Incomplete' : '✓ Mark Done'}
+            </button>
+            ${!chore.calendarEventId && isAuthorized() ? 
+              '<button class="btn btn-sm btn-outline-primary sync-btn" title="Sync to Calendar">📅</button>' : ''}
+          </div>
         </div>
       `;
 
-      const btn = col.querySelector('button');
-      btn.addEventListener('click', async () => {
+      const markBtn = col.querySelector('.mark-btn');
+      markBtn.addEventListener('click', async () => {
         try {
-          btn.disabled = true;
-          await toggleChoreCompletion(chore.id, !chore.done);
+          markBtn.disabled = true;
+          const newStatus = !chore.done;
+          await toggleChoreCompletion(chore.id, newStatus);
+          
+          // Update calendar event if synced
+          if (chore.calendarEventId && isAuthorized()) {
+            try {
+              await syncChoreToCalendar({ ...chore, done: newStatus });
+            } catch (calError) {
+              console.error('Error updating calendar:', calError);
+            }
+          }
+          
           await loadChores();
         } catch (error) {
           console.error('Error toggling chore:', error);
           showError('Failed to update chore.');
-          btn.disabled = false;
+          markBtn.disabled = false;
         }
       });
+
+      // Sync button handler
+      const syncBtn = col.querySelector('.sync-btn');
+      if (syncBtn) {
+        syncBtn.addEventListener('click', async () => {
+          try {
+            syncBtn.disabled = true;
+            syncBtn.textContent = '⏳';
+            const eventId = await syncChoreToCalendar(chore);
+            await updateChore(chore.id, { calendarEventId: eventId });
+            await loadChores();
+            showSuccess('Chore synced to Google Calendar!');
+          } catch (error) {
+            console.error('Error syncing chore:', error);
+            showError('Failed to sync chore to calendar.');
+            syncBtn.disabled = false;
+            syncBtn.textContent = '📅';
+          }
+        });
+      }
 
       list.appendChild(col);
     }
@@ -291,6 +418,17 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
     function showError(message) {
       const alert = document.createElement('div');
       alert.className = 'alert alert-danger alert-dismissible fade show';
+      alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      page.insertBefore(alert, page.firstChild);
+      setTimeout(() => alert.remove(), 5000);
+    }
+
+    function showSuccess(message) {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-success alert-dismissible fade show';
       alert.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

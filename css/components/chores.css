@@ -216,6 +216,55 @@ body {
   }
 }
 
+/* Google Calendar Integration Styles */
+#calendar-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+#calendar-banner .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+#calendar-banner .btn-close:hover {
+  opacity: 1;
+}
+
+#calendar-connect-btn {
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+#calendar-connect-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sync-btn {
+  font-size: 1.1rem;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.sync-btn:hover {
+  transform: scale(1.1);
+}
+
+.chore-card .badge {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+}
+
+#sync-to-calendar:disabled + label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .module-hero h1 {
@@ -228,5 +277,18 @@ body {
   
   #chore-form {
     padding: 1.25rem;
+  }
+
+  #calendar-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #calendar-banner .flex-grow-1 {
+    margin-bottom: 0.75rem;
+  }
+
+  #calendar-connect-btn {
+    width: 100%;
   }
 }

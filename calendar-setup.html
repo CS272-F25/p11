@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Calendar Setup - CoHabit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem 0;
+    }
+    .setup-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .step-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+    .step {
+      display: flex;
+      margin-bottom: 1.5rem;
+      align-items: start;
+    }
+    code {
+      background: #f8f9fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: #d63384;
+    }
+    .alert-info {
+      background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+      border: 2px solid #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="setup-card">
+      <div class="text-center mb-4">
+        <h1 class="display-4 mb-2">📅 Google Calendar Setup</h1>
+        <p class="text-muted">Get your CoHabit chores synced in 5 minutes!</p>
+      </div>
+
+      <div class="alert alert-info">
+        <strong>📌 What you'll need:</strong> A Google account and 5 minutes
+      </div>
+
+      <div class="step">
+        <div class="step-badge">1</div>
+        <div>
+          <h5>Create Google Cloud Project</h5>
+          <p>Go to <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> → New Project → Name it "CoHabit"</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">2</div>
+        <div>
+          <h5>Enable Calendar API</h5>
+          <p>APIs & Services → Library → Search "Google Calendar API" → Enable</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">3</div>
+        <div>
+          <h5>Create API Key</h5>
+          <p>Credentials → Create Credentials → API Key → Copy it → Restrict to Calendar API</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">4</div>
+        <div>
+          <h5>Create OAuth Client ID</h5>
+          <p>
+            Credentials → OAuth client ID → Configure consent screen (if needed) → 
+            Web application → Add authorized origins:
+          </p>
+          <ul>
+            <li><code>http://localhost:8000</code></li>
+            <li><code>https://cs272-f25.github.io</code></li>
+          </ul>
+          <p>Copy the Client ID (ends with <code>.apps.googleusercontent.com</code>)</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">5</div>
+        <div>
+          <h5>Update Your Code</h5>
+          <p>Open <code>/js/utils/calendar.js</code> and paste your credentials:</p>
+          <pre class="bg-light p-3 rounded"><code>const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const GOOGLE_API_KEY = 'YOUR_API_KEY';</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">✓</div>
+        <div>
+          <h5>Test It!</h5>
+          <p>
+            Start your server: <code>python3 -m http.server 8000</code><br>
+            Open <code>localhost:8000/chores.html</code><br>
+            Click "Connect Calendar" and sign in!
+          </p>
+        </div>
+      </div>
+
+      <div class="alert alert-success mt-4">
+        <strong>✨ Features you'll get:</strong>
+        <ul class="mb-0 mt-2">
+          <li>One-click calendar sync for chores</li>
+          <li>Automatic reminders (1 hour & 1 day before)</li>
+          <li>Visual sync status with 📅 badges</li>
+          <li>Manual sync for existing chores</li>
+        </ul>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="GOOGLE_CALENDAR_SETUP.md" class="btn btn-outline-primary me-2">📖 Full Documentation</a>
+        <a href="chores.html" class="btn btn-primary">🚀 Go to Chores</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

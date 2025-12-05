@@ -8,10 +8,14 @@ Pages:
 - `/about.html` — Project mission and accessibility notes
 - `/directory.html` — Add/remove roommates with local storage
 - `/finance.html` — Log expenses and calculate per-person splits & balances
-- `/chores.html` — Assign chores, set frequency & due date, mark completion
+- `/chores.html` — Assign chores, set frequency & due date, mark completion **+ Google Calendar sync**
 - `/notifications.html` — Synthesized reminders from chores & expenses
 - `/search.html` — Filter roommate prospects by tags & availability
 - `/profile.html` — Edit and preview personal preferences
+
+## 🆕 Google Calendar Integration
+
+CoHabit now integrates with Google Calendar to automatically sync your chores! See [GOOGLE_CALENDAR_SETUP.md](GOOGLE_CALENDAR_SETUP.md) for detailed setup instructions.
 
 How to view locally:
 1. From the repository root, run a simple static server (Python 3):
@@ -32,6 +36,7 @@ Notes for the assignment:
 - Design library: Bootstrap CDN is used for layout and components.
 - Meaningful CSS: custom layout helpers, badge styling, contrast tweaks, focus states in `css/styles.css`.
 - Meaningful JS: `js/app.js` powers directory, finance calculations, chores tracking, notifications synthesis, search filtering, profile editing, and expense splitting.
+- **External API Integration**: Google Calendar API syncs chores to users' calendars with OAuth 2.0 authentication
 - Accessibility: inputs have labels, images have `alt`, and headings are hierarchical.
 
 To finalize for submission: make a copy of the course reflection document, fill it out with your team, download as PDF, and submit to the assignment.

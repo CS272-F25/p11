@@ -10,6 +10,16 @@
 <body>
   <div data-component="navbar" data-page="chores"></div>
   <main class="container py-5" id="chores-page">
+    <!-- Google Calendar Integration Banner -->
+    <div class="alert alert-info alert-dismissible fade show d-flex align-items-center" role="alert" id="calendar-banner">
+      <div class="flex-grow-1">
+        <strong>📅 Google Calendar Sync</strong>
+        <span id="calendar-status-text">Connect your Google Calendar to sync chores automatically.</span>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary me-2" id="calendar-connect-btn">Connect Calendar</button>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="row">
       <!-- Left Column: Form and Chore List -->
       <div class="col-lg-8">
@@ -31,6 +41,13 @@
           </select>
 
           <input type="date" name="due" class="form-control mb-2" required>
+
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="sync-to-calendar" name="syncToCalendar">
+            <label class="form-check-label" for="sync-to-calendar">
+              📅 Sync to Google Calendar
+            </label>
+          </div>
 
           <button type="submit" class="btn btn-primary w-100">Add Chore</button>
         </form>
@@ -76,6 +93,7 @@
   <script type="module" src="/firebase.js"></script>
   <script type="module" src="/js/utils/household.js"></script>
   <script type="module" src="/js/utils/chores.js"></script>
+  <script type="module" src="/js/utils/calendar.js"></script>
   <script type="module" src="/js/pages/chores.js"></script>
   <script type="module" src="/js/main.js"></script>
 </body>
