@@ -15,3 +15,6 @@
 @import url('components/chores.css');
 @import url('components/notifications.css');
 @import url('components/finance.css');
+
+/*Chore Management Page Styles*/    
+@import url('components/chores.css');
