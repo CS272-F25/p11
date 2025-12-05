@@ -84,11 +84,16 @@
           </div>
           <div class="col-md-3">
             <label for="exPaidBy" class="form-label">Paid By</label>
-            <input id="exPaidBy" name="paidBy" class="form-control" placeholder="Name" required>
+            <select id="exPaidBy" name="paidBy" class="form-select" required>
+              <option value="">Select member...</option>
+            </select>
           </div>
           <div class="col-md-9">
-            <label for="exParticipants" class="form-label">Participants (comma separated)</label>
-            <input id="exParticipants" name="participants" class="form-control" placeholder="Alice, Ben, Charlie" required>
+            <label for="exParticipants" class="form-label">Participants</label>
+            <select id="exParticipants" name="participants" class="form-select" multiple required style="min-height: 80px;">
+              <option value="">Select participants...</option>
+            </select>
+            <small class="text-muted d-block mt-1">Hold Ctrl/Cmd to select multiple members (or click and drag)</small>
           </div>
           <div class="col-md-3 d-flex align-items-end">
             <button class="btn btn-primary-custom w-100" type="submit">Add Expense</button>
@@ -180,7 +185,8 @@
   <script src="/js/utils/storage.js"></script>
   <script src="/js/utils/helpers.js"></script>
   <script src="/js/pages/home.js"></script>
-  <script src="/js/pages/finance.js"></script>
+  <script type="module" src="/js/utils/household.js"></script>
+  <script type="module" src="/js/pages/finance.js"></script>
   <script src="/js/pages/chores.js"></script>
   <script src="/js/pages/notifications.js"></script>
   <script src="/js/pages/profile.js"></script>

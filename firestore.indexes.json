@@ -41,7 +41,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "date",
+          "fieldPath": "createdAt",
           "order": "DESCENDING"
         }
       ]

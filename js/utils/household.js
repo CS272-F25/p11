@@ -126,30 +126,6 @@ export async function joinHousehold(inviteCode) {
 }
 
 /**
- * Get all members of a household with their user data
- * @param {string} householdId
- * @returns {Promise<Array>}
- */
-export async function getHouseholdMembers(householdId) {
-  const household = await getHousehold(householdId);
-  
-  const membersData = await Promise.all(
-    household.members.map(async (userId) => {
-      const userDoc = await getDoc(doc(db, 'users', userId));
-      if (userDoc.exists()) {
-        return {
-          id: userId,
-          ...userDoc.data()
-        };
-      }
-      return null;
-    })
-  );
-
-  return membersData.filter(member => member !== null);
-}
-
-/**
  * Remove a member from household
  * @param {string} householdId
  * @param {string} userId
@@ -281,4 +257,38 @@ export async function switchHousehold(householdId) {
     householdId: householdId,
     updatedAt: serverTimestamp()
   });
+}
+
+/**
+ * Get household members with their details
+ * @param {string} householdId
+ * @returns {Promise<Array>} Array of member objects with uid, displayName, and email
+ */
+export async function getHouseholdMembers(householdId) {
+  const household = await getHousehold(householdId);
+  const memberDetails = [];
+
+  // Fetch details for each member
+  for (const memberId of household.members) {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', memberId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        memberDetails.push({
+          uid: memberId,
+          displayName: userData.displayName || userData.email?.split('@')[0] || 'Unknown User',
+          email: userData.email || ''
+        });
+      }
+    } catch (error) {
+      console.error(`Error fetching user ${memberId}:`, error);
+      memberDetails.push({
+        uid: memberId,
+        displayName: 'Unknown User',
+        email: ''
+      });
+    }
+  }
+
+  return memberDetails;
 }
