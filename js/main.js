@@ -2,6 +2,7 @@
 (function(){
   document.addEventListener('DOMContentLoaded', () => {
     const C = window.Cohabit || {};
+    if(C.initHomePage) C.initHomePage();
     if(C.initExpenseSplitter) C.initExpenseSplitter();
     if(C.initFinancePage) C.initFinancePage();
     if(C.initChoresPage) C.initChoresPage();
