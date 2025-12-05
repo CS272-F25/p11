@@ -185,7 +185,6 @@
       // keep it simple: just an alert (works everywhere)
       alert('🎉 All chores completed! Great job keeping the place running.');
     }
-  }
 
   function uid() {
     return (window.Cohabit && window.Cohabit.uid)

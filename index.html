@@ -10,48 +10,260 @@
 <body>
   <div data-component="navbar" data-page="home"></div>
 
-  
-  <main class="container py-5">
-    <h1 class="mb-3">CoHabit — Roommate management made simple</h1>
-    <p class="lead">A smarter way to share a home — track chores, costs, and everything in between.</p>
+  <main class="container py-5" id="home-page">
+    <!-- Welcome Header -->
+    <div class="mb-5">
+      <h1 class="mb-2">Welcome back, <span id="user-name">User</span>! 👋</h1>
+      <p class="lead text-muted">Here's what's happening in your household.</p>
+    </div>
 
-    <section class="dashboard-fullwidth py-3">
-      <div class="container">
-        <div class="card p-3 mini-dashboard-card fullwidth-card mx-auto">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 id="dashboard" class="h5 mb-0">Dashboard</h2>
-            <small class="text-muted">Preview</small>
-          </div>
-          <div class="row text-center gy-2">
-            <div class="col-6 col-sm-4">
-              <div class="stat">
-                <div class="h4 mb-0" id="md-chores">3</div>
-                <div class="small text-muted">upcoming chores</div>
-                <div class="mt-2"><a href="/chores.html" class="btn btn-sm btn-outline-primary">Open chores</a></div>
-              </div>
+    <!-- Dashboard Stats -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm hover-lift">
+          <div class="card-body text-center">
+            <div class="mb-3">
+              <span class="display-4">✓</span>
             </div>
-            <div class="col-6 col-sm-4">
-              <div class="stat">
-                <div class="h4 mb-0" id="md-bills">2</div>
-                <div class="small text-muted">bills due</div>
-                <div class="mt-2"><a href="/finance.html" class="btn btn-sm btn-outline-primary">Open finance</a></div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4">
-              <div class="stat">
-                <div class="h4 mb-0" id="md-roommates">3</div>
-                <div class="small text-muted">roommates</div>
-                <div class="mt-2"><a href="/directory.html" class="btn btn-sm btn-outline-primary">Open directory</a></div>
-              </div>
-            </div>
+            <h3 class="h2 mb-1" id="stat-chores">0</h3>
+            <p class="text-muted mb-3">Chores This Week</p>
+            <a href="/chores.html" class="btn btn-outline-primary btn-sm">Manage Chores →</a>
           </div>
         </div>
       </div>
-    </section>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm hover-lift">
+          <div class="card-body text-center">
+            <div class="mb-3">
+              <span class="display-4">💰</span>
+            </div>
+            <h3 class="h2 mb-1" id="stat-expenses">$0</h3>
+            <p class="text-muted mb-3">Total Expenses</p>
+            <a href="/finance.html" class="btn btn-outline-primary btn-sm">View Finances →</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm hover-lift">
+          <div class="card-body text-center">
+            <div class="mb-3">
+              <span class="display-4">👥</span>
+            </div>
+            <h3 class="h2 mb-1" id="stat-members">0</h3>
+            <p class="text-muted mb-3">Household Members</p>
+            <a href="/household.html" class="btn btn-outline-primary btn-sm">View Household →</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Quick Features removed per request -->
+    <!-- Two Column Layout -->
+    <div class="row g-4">
+      <!-- Left Column -->
+      <div class="col-lg-8">
+        <!-- Upcoming Chores -->
+        <section class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h4 mb-0">📋 Upcoming Chores</h2>
+            <a href="/chores.html" class="text-decoration-none small">View all →</a>
+          </div>
+          <div id="upcoming-chores" class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="text-center text-muted py-4">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
+        <!-- Recent Expenses -->
+        <section class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h4 mb-0">💸 Recent Expenses</h2>
+            <a href="/finance.html" class="text-decoration-none small">View all →</a>
+          </div>
+          <div id="recent-expenses" class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="text-center text-muted py-4">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
+      <!-- Right Column -->
+      <div class="col-lg-4">
+        <!-- Household Members -->
+        <section class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">👥 Household</h2>
+            <a href="/household.html" class="text-decoration-none small">Manage →</a>
+          </div>
+          <div id="household-members" class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="text-center text-muted py-4">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="mb-4">
+          <h2 class="h5 mb-3">⚡ Quick Actions</h2>
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addChoreModal">
+              ✓ Add Chore
+            </button>
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+              💰 Add Expense
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="show-invite-btn">
+              📧 Show Invite Code
+            </button>
+          </div>
+        </section>
+
+        <!-- Household Info -->
+        <section>
+          <div class="card border-0 bg-light">
+            <div class="card-body">
+              <h3 class="h6 mb-2">🏠 <span id="household-name">Your Household</span></h3>
+              <p class="small text-muted mb-2">Invite Code: <code id="invite-code" class="user-select-all">------</code></p>
+              <button id="copy-invite-code" class="btn btn-sm btn-outline-secondary w-100">Copy Invite Code</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Empty State (shown when not in household) -->
+    <div id="empty-state" class="text-center py-5 d-none">
+      <div class="mb-4">
+        <span class="display-1">🏠</span>
+      </div>
+      <h2 class="h4 mb-3">Welcome to CoHabit!</h2>
+      <p class="text-muted mb-4">You're not part of a household yet. Create your own or join an existing one to get started.</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="/household-setup.html" class="btn btn-primary">Create Household</a>
+        <a href="/household-setup.html" class="btn btn-outline-primary">Join with Code</a>
+      </div>
+    </div>
+
+    <!-- Add Chore Modal -->
+    <div class="modal fade" id="addChoreModal" tabindex="-1" aria-labelledby="addChoreModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addChoreModalLabel">✓ Add New Chore</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="quick-chore-form">
+              <div class="mb-3">
+                <label for="quick-chore-name" class="form-label">Chore Name</label>
+                <input type="text" class="form-control" id="quick-chore-name" name="name" placeholder="e.g., Take out trash" required>
+              </div>
+              <div class="mb-3">
+                <label for="quick-chore-assignee" class="form-label">Assign To</label>
+                <select class="form-select" id="quick-chore-assignee" name="assignee" required>
+                  <option value="">Select member...</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="quick-chore-frequency" class="form-label">Frequency</label>
+                <select class="form-select" id="quick-chore-frequency" name="frequency" required>
+                  <option value="">Select frequency...</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="quick-chore-due" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="quick-chore-due" name="due" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="submit-quick-chore">Add Chore</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addExpenseModalLabel">💰 Add New Expense</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="quick-expense-form">
+              <div class="mb-3">
+                <label for="quick-expense-description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="quick-expense-description" name="description" placeholder="e.g., Groceries" required>
+              </div>
+              <div class="mb-3">
+                <label for="quick-expense-amount" class="form-label">Amount ($)</label>
+                <input type="number" class="form-control" id="quick-expense-amount" name="amount" placeholder="0.00" step="0.01" min="0" required>
+              </div>
+              <div class="mb-3">
+                <label for="quick-expense-paidby" class="form-label">Paid By</label>
+                <select class="form-select form-select-lg" id="quick-expense-paidby" name="paidBy" required>
+                  <option value="">Select who paid...</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Split With</label>
+                <div id="quick-expense-participants" class="border rounded p-3">
+                  <!-- Checkboxes will be inserted here -->
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="quick-expense-date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="quick-expense-date" name="date" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" id="submit-quick-expense">Add Expense</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite Code Modal -->
+    <div class="modal fade" id="inviteCodeModal" tabindex="-1" aria-labelledby="inviteCodeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="inviteCodeModalLabel">📧 Invite Members</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p class="mb-3">Share this code with others to invite them to your household:</p>
+            <div class="p-4 bg-light rounded mb-3">
+              <h2 class="display-4 mb-0 user-select-all" id="modal-invite-code">------</h2>
+            </div>
+            <button type="button" class="btn btn-primary w-100" id="modal-copy-invite">
+              📋 Copy Invite Code
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <div data-component="footer"></div>
@@ -60,13 +272,10 @@
   <script src="/js/components.js"></script>
   <script src="/js/utils/storage.js"></script>
   <script src="/js/utils/helpers.js"></script>
-  <script src="/js/pages/home.js"></script>
-  <script src="/js/pages/directory.js"></script>
-  <script src="/js/pages/finance.js"></script>
-  <script src="/js/pages/chores.js"></script>
-  <script src="/js/pages/notifications.js"></script>
-  <script src="/js/pages/search.js"></script>
-  <script src="/js/pages/profile.js"></script>
-  <script src="/js/main.js"></script>
+  <script type="module" src="/firebase.js"></script>
+  <script type="module" src="/js/utils/household.js"></script>
+  <script type="module" src="/js/utils/chores.js"></script>
+  <script type="module" src="/js/pages/home.js"></script>
+  <script type="module" src="/js/main.js"></script>
 </body>
 </html>

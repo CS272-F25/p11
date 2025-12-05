@@ -41,6 +41,12 @@
       await loadComponent('navbar', '[data-component="navbar"]');
       const pageName = navPlaceholder.getAttribute('data-page');
       if (pageName) setActiveNav(pageName);
+      
+      // Load household selector after navbar is loaded
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = '/js/utils/household-selector.js';
+      document.body.appendChild(script);
     }
 
     // Load footer if placeholder exists
