@@ -1,195 +1,303 @@
-(function () {
-  const { getJSON, setJSON, escape: esc } = window.Cohabit;
+import { auth } from '../../firebase.js';
+import { 
+  createChore, 
+  getHouseholdChores, 
+  toggleChoreCompletion,
+  deleteCompletedChores
+} from '../utils/chores.js';
+import { 
+  getCurrentUserHousehold, 
+  getHouseholdMembers 
+} from '../utils/household.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  function initChoresPage() {
+(function(){
+  function esc(str) {
+    return String(str).replace(/[&<>\"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\'':'&#39;'}[s]));
+  }
+
+  async function initChoresPage() {
     const page = document.getElementById('chores-page');
     if (!page) return;
 
     const form = document.getElementById('chore-form');
     const list = document.getElementById('chore-list');
     const history = document.getElementById('chore-history');
-    const assigneeSelect = document.getElementById('chore-assignee');
     const clearBtn = document.getElementById('clear-chores');
+    const assigneeSelect = document.getElementById('chore-assignee');
+    const congratsModal = new bootstrap.Modal(document.getElementById('choresCongratsModal'));
 
-    // chores + roommates
-    let chores = getJSON('cohabit_chores', []);
-    let roommates = getJSON('cohabit_roommates', []);
+    let currentHousehold = null;
+    let householdMembers = [];
+    let chores = [];
 
-    populateAssignees();
-    render();
-
-    // ----- form submit -----
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const name = form.name.value.trim();
-      const assignee = form.assignee.value.trim();
-      const frequency = form.frequency.value;
-      const due = form.due.value;
-
-      if (!name || !assignee || !frequency || !due) return;
-
-      chores.push({
-        id: uid(),
-        name,
-        assignee,
-        frequency,
-        due,
-        done: false,
-        completedAt: null
-      });
-
-      setJSON('cohabit_chores', chores);
-      form.reset();
-      populateAssignees(); // reset clears the select
-      render();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          await loadHouseholdData();
+          await loadChores();
+        } catch (error) {
+          console.error('Error loading chores:', error);
+          showError('Failed to load chores. Please try refreshing the page.');
+        }
+      } else {
+        window.location.href = '/login.html';
+      }
     });
 
-    // ----- clear completed button -----
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        chores = chores.filter(c => !c.done); // keep only incomplete
-        setJSON('cohabit_chores', chores);
-        render();
+    async function loadHouseholdData() {
+      try {
+        currentHousehold = await getCurrentUserHousehold();
+        
+        if (!currentHousehold) {
+          showError('You need to join a household first.');
+          assigneeSelect.innerHTML = '<option value="">No household found</option>';
+          return;
+        }
+
+        householdMembers = await getHouseholdMembers(currentHousehold.id);
+        populateAssigneeDropdown();
+      } catch (error) {
+        console.error('Error loading household:', error);
+        throw error;
+      }
+    }
+
+    function populateAssigneeDropdown() {
+      assigneeSelect.innerHTML = '<option value="">Select assignee…</option>';
+      
+      householdMembers.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.uid;
+        option.textContent = member.displayName;
+        assigneeSelect.appendChild(option);
       });
     }
 
-    // ===== helpers =====
+    async function loadChores() {
+      if (!currentHousehold) return;
 
-    function populateAssignees() {
-      if (!assigneeSelect) return;
-
-      assigneeSelect.innerHTML = '<option value="">Choose roommate...</option>';
-      roommates.forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r.name;
-        opt.textContent = r.name;
-        assigneeSelect.appendChild(opt);
-      });
+      try {
+        showLoading(list);
+        chores = await getHouseholdChores(currentHousehold.id);
+        renderChores();
+        renderHistory();
+        updateClearButton();
+      } catch (error) {
+        console.error('Error loading chores:', error);
+        showError('Failed to load chores.');
+      }
     }
 
-    function render() {
-      list.innerHTML = '';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-      chores.forEach(c => {
-        const col = document.createElement('div');
-        col.className = 'col-sm-6 col-md-4 col-lg-3';
-
-        col.innerHTML = `
-          <div class="card chore-card p-3 ${c.done ? 'done' : ''}" data-id="${c.id}">
-            <h3 class="h5">${esc(c.name)}</h3>
-            <p class="mb-1">
-              <strong>${esc(c.assignee)}</strong>
-              • ${esc(c.frequency)}
-              • Due ${esc(c.due)}
-            </p>
-            <button class="btn btn-sm ${c.done ? 'btn-secondary' : 'btn-success'}">
-              ${c.done ? 'Mark Incomplete' : 'Mark Done'}
-            </button>
-          </div>
-        `;
-
-        const btn = col.querySelector('button');
-        btn.addEventListener('click', () => {
-          const wasAllDone = chores.length > 0 && chores.every(ch => ch.done);
-
-          c.done = !c.done;
-          c.completedAt = c.done ? new Date().toISOString() : null;
-
-          setJSON('cohabit_chores', chores);
-
-          const isNowAllDone = chores.length > 0 && chores.every(ch => ch.done);
-          if (!wasAllDone && isNowAllDone) {
-            showCongrats();
-          }
-
-          render();
-        });
-
-        list.appendChild(col);
-      });
-
-      // show clear button if ANY chore is done
-      const anyDone = chores.some(c => c.done);
-      if (clearBtn) {
-        clearBtn.classList.toggle('d-none', !anyDone);
+      if (!currentHousehold) {
+        showError('You need to join a household first.');
+        return;
       }
 
-      renderHistory();
+      const name = form.name.value.trim();
+      const assigneeId = form.assignee.value;
+      const frequency = form.frequency.value;
+      const dueDate = form.due.value;
+
+      if (!name || !assigneeId || !frequency || !dueDate) {
+        showError('Please fill in all fields.');
+        return;
+      }
+
+      const submitBtn = form.querySelector('button');
+      if (!submitBtn) {
+        console.error('Submit button not found');
+        return;
+      }
+
+      try {
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Adding...';
+
+        const assigneeMember = householdMembers.find(m => m.uid === assigneeId);
+        
+        await createChore({
+          name,
+          assigneeId,
+          assigneeName: assigneeMember ? assigneeMember.displayName : '',
+          frequency,
+          dueDate,
+          householdId: currentHousehold.id
+        });
+
+        form.reset();
+        await loadChores();
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      } catch (error) {
+        console.error('Error creating chore:', error);
+        showError('Failed to create chore. Please try again.');
+        const submitBtn = form.querySelector('button');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Add Chore';
+        }
+      }
+    });
+
+    clearBtn.addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to delete all completed chores?')) {
+        return;
+      }
+
+      try {
+        clearBtn.disabled = true;
+        clearBtn.textContent = 'Clearing...';
+        
+        await deleteCompletedChores(currentHousehold.id);
+        await loadChores();
+        
+        clearBtn.disabled = false;
+        clearBtn.textContent = 'Clear completed';
+      } catch (error) {
+        console.error('Error clearing chores:', error);
+        showError('Failed to clear completed chores.');
+        clearBtn.disabled = false;
+        clearBtn.textContent = 'Clear completed';
+      }
+    });
+
+    function renderChores() {
+      list.innerHTML = '';
+
+      const incompleteChores = chores.filter(c => !c.done);
+      const completedChores = chores.filter(c => c.done);
+
+      if (chores.length === 0) {
+        list.innerHTML = '<div class="col-12"><p class="text-muted text-center py-4">No chores yet. Add your first chore above!</p></div>';
+        return;
+      }
+
+      incompleteChores.forEach(renderChoreCard);
+      completedChores.forEach(renderChoreCard);
+
+      if (incompleteChores.length === 0 && completedChores.length > 0) {
+        setTimeout(() => congratsModal.show(), 500);
+      }
+    }
+
+    function renderChoreCard(chore) {
+      const col = document.createElement('div');
+      col.className = 'col-md-6 col-lg-4';
+      
+      const isOverdue = !chore.done && chore.dueDate < new Date().toISOString().split('T')[0];
+      const statusClass = chore.done ? 'done' : (isOverdue ? 'overdue' : '');
+      
+      col.innerHTML = `
+        <div class='card chore-card p-3 ${statusClass}' data-id='${chore.id}'>
+          <h3 class='h5 mb-2'>${esc(chore.name)}</h3>
+          <p class='mb-2 small'>
+            <strong>👤 ${esc(chore.assigneeName || 'Unassigned')}</strong><br>
+            📅 ${esc(chore.frequency)} • Due ${formatDate(chore.dueDate)}
+            ${isOverdue ? '<br><span class="text-danger">⚠️ Overdue</span>' : ''}
+          </p>
+          <button class='btn btn-sm w-100 ${chore.done ? 'btn-outline-secondary' : 'btn-success'}'>
+            ${chore.done ? '↩️ Mark Incomplete' : '✓ Mark Done'}
+          </button>
+        </div>
+      `;
+
+      const btn = col.querySelector('button');
+      btn.addEventListener('click', async () => {
+        try {
+          btn.disabled = true;
+          await toggleChoreCompletion(chore.id, !chore.done);
+          await loadChores();
+        } catch (error) {
+          console.error('Error toggling chore:', error);
+          showError('Failed to update chore.');
+          btn.disabled = false;
+        }
+      });
+
+      list.appendChild(col);
     }
 
     function renderHistory() {
       if (!history) return;
 
-      const completed = chores.filter(c => c.done && c.completedAt);
-      if (completed.length === 0) {
-        history.textContent = 'No completed chores yet.';
+      const completedChores = chores.filter(c => c.done);
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const recentCompleted = completedChores.filter(c => {
+        if (!c.completedAt) return false;
+        const completedDate = c.completedAt.toDate ? c.completedAt.toDate() : new Date(c.completedAt);
+        return completedDate >= oneWeekAgo;
+      });
+
+      if (recentCompleted.length === 0) {
+        history.innerHTML = '<p class="text-muted mb-0">No chores completed this week.</p>';
         return;
       }
 
-      const buckets = {};
+      const historyHTML = recentCompleted.map(c => {
+        const completedDate = c.completedAt ? 
+          (c.completedAt.toDate ? c.completedAt.toDate() : new Date(c.completedAt)) : 
+          new Date();
+        return `
+          <div class="mb-2 pb-2 border-bottom">
+            <div class="fw-semibold">${esc(c.name)}</div>
+            <div class="text-muted" style="font-size: 0.85em;">
+              ${esc(c.assigneeName)} • ${formatDate(completedDate.toISOString().split('T')[0])}
+            </div>
+          </div>
+        `;
+      }).join('');
 
-      completed.forEach(c => {
-        const d = new Date(c.completedAt);
-        const weekStart = startOfWeek(d);
-        const key = weekStart.toISOString().slice(0, 10); // YYYY-MM-DD
-
-        if (!buckets[key]) buckets[key] = [];
-        buckets[key].push(c);
-      });
-
-      history.innerHTML = '';
-
-      Object.keys(buckets)
-        .sort((a, b) => b.localeCompare(a)) // newest week first
-        .forEach(key => {
-          const weekStart = new Date(key);
-          const label = `Week of ${weekStart.toLocaleDateString(undefined, {
-            month: 'short',
-            day: 'numeric'
-          })}`;
-
-          const wrapper = document.createElement('div');
-          wrapper.className = 'mb-3';
-
-          const items = buckets[key]
-            .map(c => `
-              <li>
-                <strong>${esc(c.name)}</strong>
-                <span class="text-muted"> – ${esc(c.assignee)}</span>
-              </li>
-            `)
-            .join('');
-
-          wrapper.innerHTML = `
-            <h3 class="h6 mb-1">${label}</h3>
-            <ul class="mb-0 ps-3">
-              ${items}
-            </ul>
-          `;
-
-          history.appendChild(wrapper);
-        });
+      history.innerHTML = historyHTML;
     }
 
-    function startOfWeek(date) {
-      const d = new Date(date);
-      const day = d.getDay(); // 0 = Sun, 1 = Mon, ...
-      const diff = d.getDate() - (day === 0 ? 6 : day - 1); // Monday start
-      d.setDate(diff);
-      d.setHours(0, 0, 0, 0);
-      return d;
+    function updateClearButton() {
+      const hasCompleted = chores.some(c => c.done);
+      if (hasCompleted) {
+        clearBtn.classList.remove('d-none');
+      } else {
+        clearBtn.classList.add('d-none');
+      }
     }
 
-    function showCongrats() {
-      // keep it simple: just an alert (works everywhere)
-      alert('🎉 All chores completed! Great job keeping the place running.');
+    function formatDate(dateStr) {
+      const date = new Date(dateStr + 'T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      if (date.toDateString() === today.toDateString()) {
+        return 'Today';
+      } else if (date.toDateString() === tomorrow.toDateString()) {
+        return 'Tomorrow';
+      } else {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
     }
 
-  function uid() {
-    return (window.Cohabit && window.Cohabit.uid)
-      ? window.Cohabit.uid()
-      : Math.random().toString(36).slice(2, 10);
+    function showLoading(element) {
+      element.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+    }
+
+    function showError(message) {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-danger alert-dismissible fade show';
+      alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      page.insertBefore(alert, page.firstChild);
+      setTimeout(() => alert.remove(), 5000);
+    }
   }
 
   window.Cohabit = window.Cohabit || {};
