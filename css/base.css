@@ -1,13 +1,15 @@
 /* Base Styles */
 body {
-  background: var(--bg);
+  background: var(--bg-gradient);
   color: #212529;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
 }
 
 main h2 {
-  color: var(--brand);
+  color: var(--text-dark);
   margin-top: 1.25rem;
+  font-weight: 700;
 }
 
 main p {
@@ -15,7 +17,7 @@ main p {
 }
 
 :focus {
-  outline: 3px solid rgba(13, 110, 253, 0.35);
+  outline: 3px solid rgba(99, 102, 241, 0.35);
   outline-offset: 2px;
 }
 
