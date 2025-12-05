@@ -10,33 +10,31 @@
 <body>
   <div data-component="navbar" data-page="chores"></div>
   <main class="container py-5" id="chores-page">
-    <h1 class="mb-4">Chore Management Page</h1>
-    <p class="mb-4">Assign chores, set frequencies, and track completion status.</p>
-    <form id="chore-form">
-      <input name="name" id="chore-name" class="form-control mb-2" placeholder="Chore name" required>
+    <div class="row">
+      <!-- Left Column: Form and Chore List -->
+      <div class="col-lg-8">
+        <h1 class="mb-4">Chore Management Page</h1>
+        <p class="mb-4">Assign chores, set frequencies, and track completion status.</p>
+        
+        <form id="chore-form" class="mb-4">
+          <input name="name" id="chore-name" class="form-control mb-2" placeholder="Chore name" required>
 
-  <!-- change this from <input> to <select> -->
-      <select name="assignee" id="chore-assignee" class="form-select mb-2" required>
-    <!-- options will be inserted by JS -->
-      </select>
+          <select name="assignee" id="chore-assignee" class="form-select mb-2" required>
+            <!-- options will be inserted by JS -->
+          </select>
 
-      <select name="frequency" class="form-select mb-2">
-        <option value="">Frequency…</option>
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-      </select>
+          <select name="frequency" class="form-select mb-2" required>
+            <option value="">Frequency…</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
 
-      <input type="date" name="due" class="form-control mb-2" required>
+          <input type="date" name="due" class="form-control mb-2" required>
 
-      <button class="btn btn-primary w-100">Add Chore</button>
-    </form>
-   <!-- <section class="mt-5" aria-labelledby="choreListHeading">
-      <h2 id="choreListHeading">Chore List</h2>
-      <div id="chore-list" class="row g-3" aria-live="polite"></div>
-    </section> -->
-    <div class="row mt-4">
-      <div class="col-12 pe-lg-5">
+          <button type="submit" class="btn btn-primary w-100">Add Chore</button>
+        </form>
+
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h2 class="h4 mb-0">Chore List</h2>
           <button id="clear-chores"
@@ -46,6 +44,14 @@
           </button>
         </div>
         <div id="chore-list" class="row g-3"></div>
+      </div>
+
+      <!-- Right Column: Completed This Week -->
+      <div class="col-lg-4">
+        <div id="chore-history-wrapper" class="sticky-top" style="top: 2rem;">
+          <h2 class="h5 mb-3">Completed This Week</h2>
+          <div id="chore-history" class="card p-3 shadow-sm"></div>
+        </div>
       </div>
     </div>
 
@@ -61,23 +67,16 @@
       </div>
     </div>
 
-<!-- Floating side panel for history -->
-    <div id="chore-history-wrapper">
-      <h2 class="h5 mb-2">Completed This Week</h2>
-      <div id="chore-history" class="card p-3 small shadow-sm"></div>
-    </div>
-
   </main>
   <div data-component="footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/components.js"></script>
   <script src="/js/utils/storage.js"></script>
   <script src="/js/utils/helpers.js"></script>
-  <script src="/js/pages/home.js"></script>
-  <script src="/js/pages/finance.js"></script>
-  <script src="/js/pages/chores.js"></script>
-  <script src="/js/pages/notifications.js"></script>
-  <script src="/js/pages/profile.js"></script>
-  <script src="/js/main.js"></script>
+  <script type="module" src="/firebase.js"></script>
+  <script type="module" src="/js/utils/household.js"></script>
+  <script type="module" src="/js/utils/chores.js"></script>
+  <script type="module" src="/js/pages/chores.js"></script>
+  <script type="module" src="/js/main.js"></script>
 </body>
 </html>
