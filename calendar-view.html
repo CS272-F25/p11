@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoHabit — Calendar View</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .calendar-container {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .calendar-nav button {
+      background: none;
+      border: 1px solid #dee2e6;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .calendar-nav button:hover {
+      background: #f8f9fa;
+      border-color: #6366f1;
+    }
+    
+    .calendar-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #e5e7eb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .calendar-day-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      text-align: center;
+      padding: 0.75rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .calendar-day {
+      background: white;
+      min-height: 120px;
+      padding: 0.5rem;
+      position: relative;
+    }
+    
+    .calendar-day.other-month {
+      background: #f9fafb;
+      opacity: 0.5;
+    }
+    
+    .calendar-day.today {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+    }
+    
+    .day-number {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 0.25rem;
+    }
+    
+    .calendar-day.today .day-number {
+      color: #f59e0b;
+    }
+    
+    .chore-item {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.25rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .chore-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    }
+    
+    .chore-item.done {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      opacity: 0.7;
+    }
+    
+    .chore-item.overdue {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+    }
+    
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .view-toggle button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #dee2e6;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .view-toggle button.active {
+      background: #6366f1;
+      color: white;
+      border-color: #6366f1;
+    }
+    
+    .chore-modal .modal-content {
+      border-radius: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .calendar-grid {
+        font-size: 0.85rem;
+      }
+      
+      .calendar-day {
+        min-height: 80px;
+        padding: 0.25rem;
+      }
+      
+      .chore-item {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.3rem;
+      }
+      
+      .calendar-header {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div data-component="navbar" data-page="calendar"></div>
+  
+  <main class="container py-5" id="calendar-page">
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <div class="calendar-nav">
+          <button id="prev-month">← Previous</button>
+          <button id="today-btn">Today</button>
+          <button id="next-month">Next →</button>
+        </div>
+        
+        <h1 class="calendar-title" id="calendar-title">December 2025</h1>
+        
+        <div class="view-toggle">
+          <button class="active" data-view="month">Month</button>
+          <button data-view="week">Week</button>
+        </div>
+      </div>
+      
+      <div class="calendar-grid" id="calendar-grid">
+        <!-- Calendar will be generated here -->
+      </div>
+      
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);"></div>
+          <span>Pending Chore</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"></div>
+          <span>Completed</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);"></div>
+          <span>Overdue</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #fef3c7; border: 2px solid #f59e0b;"></div>
+          <span>Today</span>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Chore Detail Modal -->
+  <div class="modal fade chore-modal" id="choreDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalChoreTitle">Chore Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalChoreBody">
+          <!-- Chore details will be inserted here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" id="modalMarkDone">Mark as Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div data-component="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/utils/storage.js"></script>
+  <script src="/js/utils/helpers.js"></script>
+  <script type="module" src="/firebase.js"></script>
+  <script type="module" src="/js/utils/household.js"></script>
+  <script type="module" src="/js/utils/chores.js"></script>
+  <script type="module" src="/js/pages/calendar-view.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

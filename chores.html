@@ -54,11 +54,14 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h2 class="h4 mb-0">Chore List</h2>
-          <button id="clear-chores"
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm d-none">
-            Clear completed
-          </button>
+          <div class="d-flex gap-2">
+            <a href="/calendar-view.html" class="btn btn-outline-primary btn-sm">📅 Calendar View</a>
+            <button id="clear-chores"
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm d-none">
+              Clear completed
+            </button>
+          </div>
         </div>
         <div id="chore-list" class="row g-3"></div>
       </div>

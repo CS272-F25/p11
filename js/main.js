@@ -6,6 +6,7 @@
     if(C.initExpenseSplitter) C.initExpenseSplitter();
     if(C.initFinancePage) C.initFinancePage();
     if(C.initChoresPage) C.initChoresPage();
+    if(C.initCalendarPage) C.initCalendarPage();
     if(C.initNotificationsPage) C.initNotificationsPage();
     if(C.initProfilePage) C.initProfilePage();
     if(C.initHouseholdPage) C.initHouseholdPage();

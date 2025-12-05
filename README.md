@@ -9,6 +9,7 @@ Pages:
 - `/directory.html` — Add/remove roommates with local storage
 - `/finance.html` — Log expenses and calculate per-person splits & balances
 - `/chores.html` — Assign chores, set frequency & due date, mark completion **+ Google Calendar sync**
+- `/calendar-view.html` — **NEW:** Visual calendar view of all chore due dates with month/week toggle
 - `/notifications.html` — Synthesized reminders from chores & expenses
 - `/search.html` — Filter roommate prospects by tags & availability
 - `/profile.html` — Edit and preview personal preferences
@@ -16,6 +17,14 @@ Pages:
 ## 🆕 Google Calendar Integration
 
 CoHabit now integrates with Google Calendar to automatically sync your chores! See [GOOGLE_CALENDAR_SETUP.md](GOOGLE_CALENDAR_SETUP.md) for detailed setup instructions.
+
+## 📅 Calendar View Features
+
+- **Month & Week Views:** Toggle between month and week calendar layouts
+- **Visual Due Dates:** See all chores organized by due date
+- **Color Coding:** Pending (purple), completed (green), overdue (red)
+- **Interactive:** Click any chore to see details and mark as done
+- **Today Highlight:** Current day is highlighted in yellow
 
 How to view locally:
 1. From the repository root, run a simple static server (Python 3):

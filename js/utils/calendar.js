@@ -15,6 +15,10 @@ let gisInited = false;
 let tokenClient;
 let accessToken = null;
 
+// Storage keys
+const CALENDAR_TOKEN_KEY = 'cohabit_calendar_token';
+const CALENDAR_EXPIRY_KEY = 'cohabit_calendar_expiry';
+
 /**
  * Initialize Google API client
  */
@@ -43,6 +47,23 @@ function loadGapi(resolve, reject) {
         discoveryDocs: [CALENDAR_DISCOVERY_DOC],
       });
       gapiInited = true;
+      
+      // Restore token from localStorage if available
+      const storedToken = localStorage.getItem(CALENDAR_TOKEN_KEY);
+      const expiry = localStorage.getItem(CALENDAR_EXPIRY_KEY);
+      
+      if (storedToken && expiry) {
+        const expiryTime = parseInt(expiry);
+        if (Date.now() < expiryTime) {
+          gapi.client.setToken({ access_token: storedToken });
+          accessToken = storedToken;
+        } else {
+          // Token expired, clear it
+          localStorage.removeItem(CALENDAR_TOKEN_KEY);
+          localStorage.removeItem(CALENDAR_EXPIRY_KEY);
+        }
+      }
+      
       maybeEnableButtons(resolve);
     } catch (error) {
       reject(error);
@@ -94,6 +115,12 @@ export function requestCalendarAuthorization() {
         return;
       }
       accessToken = resp.access_token;
+      
+      // Persist token to localStorage (expires in 1 hour)
+      const expiryTime = Date.now() + (3600 * 1000); // 1 hour
+      localStorage.setItem(CALENDAR_TOKEN_KEY, resp.access_token);
+      localStorage.setItem(CALENDAR_EXPIRY_KEY, expiryTime.toString());
+      
       resolve(resp);
     };
 
@@ -109,7 +136,30 @@ export function requestCalendarAuthorization() {
  * Check if user is authorized
  */
 export function isAuthorized() {
-  return accessToken !== null || gapi.client.getToken() !== null;
+  // Check memory first
+  if (accessToken !== null || gapi.client.getToken() !== null) {
+    return true;
+  }
+  
+  // Check localStorage
+  const storedToken = localStorage.getItem(CALENDAR_TOKEN_KEY);
+  const expiry = localStorage.getItem(CALENDAR_EXPIRY_KEY);
+  
+  if (storedToken && expiry) {
+    const expiryTime = parseInt(expiry);
+    if (Date.now() < expiryTime) {
+      // Token is still valid, restore it
+      gapi.client.setToken({ access_token: storedToken });
+      accessToken = storedToken;
+      return true;
+    } else {
+      // Token expired, clear it
+      localStorage.removeItem(CALENDAR_TOKEN_KEY);
+      localStorage.removeItem(CALENDAR_EXPIRY_KEY);
+    }
+  }
+  
+  return false;
 }
 
 /**
@@ -122,6 +172,10 @@ export function signOutCalendar() {
     gapi.client.setToken('');
     accessToken = null;
   }
+  
+  // Clear from localStorage
+  localStorage.removeItem(CALENDAR_TOKEN_KEY);
+  localStorage.removeItem(CALENDAR_EXPIRY_KEY);
 }
 
 /**
