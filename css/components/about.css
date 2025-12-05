@@ -1,13 +1,12 @@
 /* About Page Styles */
 
 /* Main Container */
-main.container {
+body[data-page="about"] main.container {
   max-width: 900px;
 }
 
 /* Hero Title */
-body[data-page="about"] h1,
-main h1:first-child {
+body[data-page="about"] main h1:first-child {
   background: var(--gradient-hero);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -20,7 +19,7 @@ main h1:first-child {
 }
 
 /* Section Styling */
-main section {
+body[data-page="about"] main section {
   background: white;
   padding: 2.5rem;
   border-radius: var(--radius-lg);
@@ -32,7 +31,7 @@ main section {
   animation: fadeIn 0.6s ease-out;
 }
 
-main section::before {
+body[data-page="about"] main section::before {
   content: '';
   position: absolute;
   left: 0;
@@ -42,34 +41,34 @@ main section::before {
   background: var(--gradient-purple);
 }
 
-main section:hover {
+body[data-page="about"] main section:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
 }
 
 /* Section with different accent colors */
-main section:nth-child(1)::before {
+body[data-page="about"] main section:nth-child(1)::before {
   background: var(--gradient-hero);
 }
 
-main section:nth-child(2)::before {
+body[data-page="about"] main section:nth-child(2)::before {
   background: var(--gradient-success);
 }
 
-main section:nth-child(3)::before {
+body[data-page="about"] main section:nth-child(3)::before {
   background: var(--gradient-info);
 }
 
-main section:nth-child(4)::before {
+body[data-page="about"] main section:nth-child(4)::before {
   background: var(--gradient-warning);
 }
 
-main section:nth-child(5)::before {
+body[data-page="about"] main section:nth-child(5)::before {
   background: var(--gradient-purple);
 }
 
 /* Section Headings */
-main section h2 {
+body[data-page="about"] main section h2 {
   color: var(--text-dark);
   font-weight: 800;
   font-size: 1.75rem;
@@ -78,7 +77,7 @@ main section h2 {
   padding-bottom: 0.75rem;
 }
 
-main section h2::after {
+body[data-page="about"] main section h2::after {
   content: '';
   position: absolute;
   left: 0;
@@ -89,46 +88,46 @@ main section h2::after {
   border-radius: 2px;
 }
 
-main section:nth-child(1) h2::after {
+body[data-page="about"] main section:nth-child(1) h2::after {
   background: var(--gradient-hero);
 }
 
-main section:nth-child(2) h2::after {
+body[data-page="about"] main section:nth-child(2) h2::after {
   background: var(--gradient-success);
 }
 
-main section:nth-child(3) h2::after {
+body[data-page="about"] body[data-page="about"] main section:nth-child(3) h2::after {
   background: var(--gradient-info);
 }
 
-main section:nth-child(4) h2::after {
+body[data-page="about"] main section:nth-child(4) h2::after {
   background: var(--gradient-warning);
 }
 
-main section:nth-child(5) h2::after {
+body[data-page="about"] main section:nth-child(5) h2::after {
   background: var(--gradient-purple);
 }
 
 /* Paragraphs */
-main section p {
+body[data-page="about"] main section p {
   color: var(--text-dark);
   line-height: 1.8;
   font-size: 1.05rem;
   margin-bottom: 1.25rem;
 }
 
-main section p:last-child {
+body[data-page="about"] main section p:last-child {
   margin-bottom: 0;
 }
 
 /* Lists */
-main section ul {
+body[data-page="about"] main section ul {
   list-style: none;
   padding-left: 0;
   margin-bottom: 1rem;
 }
 
-main section li {
+body[data-page="about"] main section li {
   color: var(--text-dark);
   line-height: 1.8;
   font-size: 1.05rem;
@@ -137,7 +136,7 @@ main section li {
   position: relative;
 }
 
-main section li::before {
+body[data-page="about"] main section li::before {
   content: '✓';
   position: absolute;
   left: 0;
@@ -155,16 +154,16 @@ main section li::before {
   box-shadow: var(--shadow-sm);
 }
 
-main section:nth-child(3) li::before {
+body[data-page="about"] main section:nth-child(3) li::before {
   background: var(--gradient-info);
 }
 
-main section:nth-child(4) li::before {
+body[data-page="about"] main section:nth-child(4) li::before {
   background: var(--gradient-warning);
 }
 
 /* Strong tags */
-main section strong {
+body[data-page="about"] main section strong {
   color: var(--brand);
   font-weight: 700;
 }
@@ -182,43 +181,42 @@ main section strong {
 }
 
 /* Stagger animation for sections */
-main section:nth-child(1) {
+body[data-page="about"] main section:nth-child(1) {
   animation-delay: 0s;
 }
 
-main section:nth-child(2) {
+body[data-page="about"] main section:nth-child(2) {
   animation-delay: 0.1s;
 }
 
-main section:nth-child(3) {
+body[data-page="about"] main section:nth-child(3) {
   animation-delay: 0.2s;
 }
 
-main section:nth-child(4) {
+body[data-page="about"] main section:nth-child(4) {
   animation-delay: 0.3s;
 }
 
-main section:nth-child(5) {
+body[data-page="about"] main section:nth-child(5) {
   animation-delay: 0.4s;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  body[data-page="about"] h1,
-  main h1:first-child {
+  body[data-page="about"] main h1:first-child {
     font-size: 2.25rem;
   }
   
-  main section {
+  body[data-page="about"] main section {
     padding: 1.75rem;
   }
   
-  main section h2 {
+  body[data-page="about"] main section h2 {
     font-size: 1.5rem;
   }
   
-  main section p,
-  main section li {
+  body[data-page="about"] main section p,
+  body[data-page="about"] main section li {
     font-size: 1rem;
   }
 }
