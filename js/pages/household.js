@@ -1,20 +1,10 @@
-import { auth } from '../../firebase.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  createHousehold,
-  getCurrentUserHousehold,
-  joinHousehold,
-  getHouseholdMembers,
-  removeMemberFromHousehold,
-  leaveHousehold,
-  updateHouseholdName,
-  regenerateInviteCode
-} from '../utils/household.js';
+(function(){
+  const {escape: esc} = window.Cohabit || {escape: (s) => String(s).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))};
 
-const {escape: esc} = window.Cohabit || {};
-
-let currentHousehold = null;
-let currentUser = null;
+  let currentHousehold = null;
+  let currentUser = null;
+  let auth, onAuthStateChanged;
+  let householdUtils;
 
 function showLoading() {
   document.getElementById('loading-state').style.display = 'block';
@@ -48,7 +38,7 @@ async function loadHouseholdData() {
   showLoading();
   
   try {
-    currentHousehold = await getCurrentUserHousehold();
+    currentHousehold = await householdUtils.getCurrentUserHousehold();
     
     if (!currentHousehold) {
       showNoHousehold();
@@ -79,7 +69,7 @@ async function loadMembers() {
   membersList.innerHTML = '';
   
   try {
-    const members = await getHouseholdMembers(currentHousehold.id);
+    const members = await householdUtils.getHouseholdMembers(currentHousehold.id);
     memberCount.textContent = members.length;
     membersLoading.style.display = 'none';
     
@@ -125,7 +115,7 @@ async function loadMembers() {
         
         if (confirm(`Remove ${userName} from the household?`)) {
           try {
-            await removeMemberFromHousehold(currentHousehold.id, userId);
+            await householdUtils.removeMemberFromHousehold(currentHousehold.id, userId);
             await loadMembers();
           } catch (error) {
             alert('Error removing member: ' + error.message);
@@ -141,9 +131,22 @@ async function loadMembers() {
   }
 }
 
-function initHouseholdPage() {
+async function initHouseholdPage() {
   const page = document.getElementById('household-page');
   if (!page) return;
+
+  // Import Firebase and utilities
+  try {
+    const firebaseModule = await import('/firebase.js');
+    auth = firebaseModule.auth;
+    const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+    onAuthStateChanged = authModule.onAuthStateChanged;
+    householdUtils = await import('/js/utils/household.js');
+  } catch (error) {
+    console.error('Error loading modules:', error);
+    showError('Failed to load required modules');
+    return;
+  }
 
   // Create household form
   const createForm = document.getElementById('create-household-form');
@@ -155,7 +158,7 @@ function initHouseholdPage() {
       if (!name) return;
       
       try {
-        const result = await createHousehold(name);
+        const result = await householdUtils.createHousehold(name);
         alert(`Household created! Invite code: ${result.inviteCode}`);
         await loadHouseholdData();
       } catch (error) {
@@ -177,7 +180,7 @@ function initHouseholdPage() {
       }
       
       try {
-        await joinHousehold(code);
+        await householdUtils.joinHousehold(code);
         alert('Successfully joined household!');
         await loadHouseholdData();
       } catch (error) {
@@ -221,7 +224,7 @@ function initHouseholdPage() {
       if (!confirm('Regenerate invite code? The old code will no longer work.')) return;
       
       try {
-        const newCode = await regenerateInviteCode(currentHousehold.id);
+        const newCode = await householdUtils.regenerateInviteCode(currentHousehold.id);
         document.getElementById('invite-code-display').value = newCode;
         alert('New invite code generated!');
       } catch (error) {
@@ -240,7 +243,7 @@ function initHouseholdPage() {
       if (!newName) return;
       
       try {
-        await updateHouseholdName(currentHousehold.id, newName);
+        await householdUtils.updateHouseholdName(currentHousehold.id, newName);
         currentHousehold.name = newName;
         document.getElementById('household-name-display').textContent = newName;
         alert('Household name updated!');
@@ -257,7 +260,7 @@ function initHouseholdPage() {
       if (!confirm('Leave this household? You will need an invite code to rejoin.')) return;
       
       try {
-        await leaveHousehold();
+        await householdUtils.leaveHousehold();
         alert('You have left the household');
         await loadHouseholdData();
       } catch (error) {
@@ -277,7 +280,6 @@ function initHouseholdPage() {
   });
 }
 
-window.Cohabit = window.Cohabit || {};
-window.Cohabit.initHouseholdPage = initHouseholdPage;
-
-export { initHouseholdPage };
+  window.Cohabit = window.Cohabit || {};
+  window.Cohabit.initHouseholdPage = initHouseholdPage;
+})();
