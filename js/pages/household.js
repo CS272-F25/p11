@@ -82,7 +82,7 @@ async function loadMembers() {
       const col = document.createElement('div');
       col.className = 'col-md-6 col-lg-4 mb-3';
       
-      const isCreator = member.id === currentHousehold.createdBy;
+      const isCreator = member.isCreator || member.id === currentHousehold.createdBy;
       const isCurrentUser = member.id === currentUser.uid;
       
       col.innerHTML = `
@@ -90,8 +90,8 @@ async function loadMembers() {
           <div class="d-flex justify-content-between align-items-start">
             <div class="flex-grow-1">
               <h3 class="h6 mb-1">
-                ${esc(member.name || 'Unknown')}
-                ${isCreator ? '<span class="badge bg-primary ms-2">Creator</span>' : ''}
+                ${esc(member.name || member.displayName || 'Unknown')}
+                ${isCreator ? '<span class="badge bg-primary ms-2">Host</span>' : ''}
                 ${isCurrentUser ? '<span class="badge bg-secondary ms-2">You</span>' : ''}
               </h3>
               <p class="mb-1 small text-muted">${esc(member.email || '')}</p>

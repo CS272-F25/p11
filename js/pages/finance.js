@@ -57,7 +57,7 @@ import {
           <div class="alert alert-warning">
             <h5>No Household Found</h5>
             <p>You need to create or join a household first.</p>
-            <a href="/household.html" class="btn btn-primary">Go to Household Setup</a>
+            <a href="/household-setup.html" class="btn btn-primary">Go to Household Setup</a>
           </div>
         `;
         return;

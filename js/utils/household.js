@@ -274,10 +274,17 @@ export async function getHouseholdMembers(householdId) {
       const userDoc = await getDoc(doc(db, 'users', memberId));
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        const isCreator = memberId === household.createdBy;
         memberDetails.push({
           uid: memberId,
-          displayName: userData.displayName || userData.email?.split('@')[0] || 'Unknown User',
-          email: userData.email || ''
+          id: memberId,
+          name: userData.name || userData.displayName || userData.email?.split('@')[0] || 'Unknown User',
+          displayName: userData.name || userData.displayName || userData.email?.split('@')[0] || 'Unknown User',
+          email: userData.email || '',
+          isCreator: isCreator,
+          habits: userData.habits || '',
+          noisePreference: userData.noisePreference || '',
+          availability: userData.availability || ''
         });
       }
     } catch (error) {

@@ -8,5 +8,6 @@
     if(C.initNotificationsPage) C.initNotificationsPage();
     if(C.initProfilePage) C.initProfilePage();
     if(C.initHouseholdPage) C.initHouseholdPage();
+    if(C.initHouseholdSetupPage) C.initHouseholdSetupPage();
   });
 })();
