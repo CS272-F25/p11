@@ -7,48 +7,70 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body data-page="profile">
   <div data-component="navbar" data-page="profile"></div>
   <main class="container py-5" id="profile-page">
-    <h1 class="mb-4">Profile</h1>
-    <p class="mb-4">Edit your living preferences and contact information. Saved locally for this demo.</p>
-    <form id="profile-form" class="row g-3" novalidate>
-      <div class="col-md-6">
-        <label for="pfName" class="form-label">Name</label>
-        <input id="pfName" name="name" class="form-control" required>
+    <div class="profile-hero">
+      <h1>Your Profile</h1>
+      <p>Manage your living preferences and contact information</p>
+    </div>
+
+    <section class="profile-section">
+      <div class="section-header">
+        <h2>Personal Information</h2>
+        <p>Keep your profile up to date so your roommates can reach you</p>
       </div>
-      <div class="col-md-6">
-        <label for="pfEmail" class="form-label">Email</label>
-        <input id="pfEmail" name="email" type="email" class="form-control" required>
+      
+      <form id="profile-form" class="profile-form" novalidate>
+        <div class="form-row-profile">
+          <div class="form-group-profile">
+            <label for="pfName" class="form-label">Full Name</label>
+            <input id="pfName" name="name" class="form-control" required placeholder="John Doe">
+          </div>
+          <div class="form-group-profile">
+            <label for="pfEmail" class="form-label">Email Address</label>
+            <input id="pfEmail" name="email" type="email" class="form-control" required placeholder="you@example.com">
+          </div>
+        </div>
+        
+        <div class="form-group-profile">
+          <label for="pfHabits" class="form-label">Living Habits & Preferences</label>
+          <input id="pfHabits" name="habits" class="form-control" placeholder="e.g., Early riser, enjoys cooking, quiet environment">
+          <small class="form-hint">Share your lifestyle preferences with roommates</small>
+        </div>
+        
+        <div class="form-row-profile">
+          <div class="form-group-profile">
+            <label for="pfQuiet" class="form-label">Noise Preference</label>
+            <select id="pfQuiet" name="noise" class="form-control">
+              <option value="quiet">Quiet</option>
+              <option value="moderate">Moderate</option>
+              <option value="lively">Lively</option>
+            </select>
+          </div>
+          <div class="form-group-profile">
+            <label for="pfAvailability" class="form-label">Availability</label>
+            <select id="pfAvailability" name="availability" class="form-control">
+              <option value="immediate">Immediate</option>
+              <option value="next-month">Next Month</option>
+              <option value="flexible">Flexible</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button class="btn-profile-primary" type="submit">Save Profile</button>
+          <button class="btn-profile-danger" type="button" id="signout-btn">Sign Out</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="profile-section preview-section" aria-labelledby="profilePreviewHeading">
+      <div class="section-header">
+        <h2 id="profilePreviewHeading">Profile Preview</h2>
+        <p>This is how your profile appears to other roommates</p>
       </div>
-      <div class="col-md-4">
-        <label for="pfHabits" class="form-label">Habits / Tags</label>
-        <input id="pfHabits" name="habits" class="form-control" placeholder="early riser, tidy">
-      </div>
-      <div class="col-md-4">
-        <label for="pfQuiet" class="form-label">Noise Preference</label>
-        <select id="pfQuiet" name="noise" class="form-select">
-          <option value="quiet">Quiet</option>
-          <option value="moderate">Moderate</option>
-          <option value="lively">Lively</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label for="pfAvailability" class="form-label">Availability</label>
-        <select id="pfAvailability" name="availability" class="form-select">
-          <option value="immediate">Immediate</option>
-          <option value="next-month">Next Month</option>
-          <option value="flexible">Flexible</option>
-        </select>
-      </div>
-      <div class="col-12">
-        <button class="btn btn-success" type="submit">Save Profile</button>
-        <button class="btn btn-outline-danger ms-2" type="button" id="signout-btn">Sign Out</button>
-      </div>
-    </form>
-    <section class="mt-5" aria-labelledby="profilePreviewHeading">
-      <h2 id="profilePreviewHeading">Preview</h2>
-      <div id="profile-preview" class="card p-3" aria-live="polite"></div>
+      <div id="profile-preview" class="profile-preview-card" aria-live="polite"></div>
     </section>
   </main>
   <div data-component="footer"></div>
