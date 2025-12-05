@@ -51,11 +51,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "read",
+          "fieldPath": "recipientId",
           "order": "ASCENDING"
         },
         {

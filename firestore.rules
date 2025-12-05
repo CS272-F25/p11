@@ -62,9 +62,10 @@ service cloud.firestore {
     
     // Notifications collection - users can only access their own notifications
     match /notifications/{notificationId} {
-      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow read: if isSignedIn() && request.auth.uid == resource.data.recipientId;
       allow create: if isSignedIn();
-      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.recipientId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.recipientId;
     }
     
     // Transactions collection - only household members can access
