@@ -119,9 +119,15 @@
         <section class="mb-4">
           <h2 class="h5 mb-3">⚡ Quick Actions</h2>
           <div class="d-grid gap-2">
-            <a href="/chores.html" class="btn btn-outline-primary">Add Chore</a>
-            <a href="/finance.html" class="btn btn-outline-success">Add Expense</a>
-            <a href="/household.html" class="btn btn-outline-secondary">Invite Member</a>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addChoreModal">
+              ✓ Add Chore
+            </button>
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+              💰 Add Expense
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="show-invite-btn">
+              📧 Show Invite Code
+            </button>
           </div>
         </section>
 
@@ -148,6 +154,114 @@
       <div class="d-flex gap-3 justify-content-center flex-wrap">
         <a href="/household-setup.html" class="btn btn-primary">Create Household</a>
         <a href="/household-setup.html" class="btn btn-outline-primary">Join with Code</a>
+      </div>
+    </div>
+
+    <!-- Add Chore Modal -->
+    <div class="modal fade" id="addChoreModal" tabindex="-1" aria-labelledby="addChoreModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addChoreModalLabel">✓ Add New Chore</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="quick-chore-form">
+              <div class="mb-3">
+                <label for="quick-chore-name" class="form-label">Chore Name</label>
+                <input type="text" class="form-control" id="quick-chore-name" name="name" placeholder="e.g., Take out trash" required>
+              </div>
+              <div class="mb-3">
+                <label for="quick-chore-assignee" class="form-label">Assign To</label>
+                <select class="form-select" id="quick-chore-assignee" name="assignee" required>
+                  <option value="">Select member...</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="quick-chore-frequency" class="form-label">Frequency</label>
+                <select class="form-select" id="quick-chore-frequency" name="frequency" required>
+                  <option value="">Select frequency...</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="quick-chore-due" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="quick-chore-due" name="due" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="submit-quick-chore">Add Chore</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addExpenseModalLabel">💰 Add New Expense</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="quick-expense-form">
+              <div class="mb-3">
+                <label for="quick-expense-description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="quick-expense-description" name="description" placeholder="e.g., Groceries" required>
+              </div>
+              <div class="mb-3">
+                <label for="quick-expense-amount" class="form-label">Amount ($)</label>
+                <input type="number" class="form-control" id="quick-expense-amount" name="amount" placeholder="0.00" step="0.01" min="0" required>
+              </div>
+              <div class="mb-3">
+                <label for="quick-expense-paidby" class="form-label">Paid By</label>
+                <select class="form-select form-select-lg" id="quick-expense-paidby" name="paidBy" required>
+                  <option value="">Select who paid...</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Split With</label>
+                <div id="quick-expense-participants" class="border rounded p-3">
+                  <!-- Checkboxes will be inserted here -->
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="quick-expense-date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="quick-expense-date" name="date" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" id="submit-quick-expense">Add Expense</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite Code Modal -->
+    <div class="modal fade" id="inviteCodeModal" tabindex="-1" aria-labelledby="inviteCodeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="inviteCodeModalLabel">📧 Invite Members</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p class="mb-3">Share this code with others to invite them to your household:</p>
+            <div class="p-4 bg-light rounded mb-3">
+              <h2 class="display-4 mb-0 user-select-all" id="modal-invite-code">------</h2>
+            </div>
+            <button type="button" class="btn btn-primary w-100" id="modal-copy-invite">
+              📋 Copy Invite Code
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </main>

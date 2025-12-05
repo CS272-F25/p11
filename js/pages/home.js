@@ -5,8 +5,11 @@ import {
 } from '../utils/household.js';
 import { 
   getIncompleteChores,
-  getChoresDueSoon 
+  getChoresDueSoon,
+  createChore,
+  toggleChoreCompletion
 } from '../utils/chores.js';
+import { addExpense, deleteExpense } from '../utils/finance.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
   collection, 
@@ -38,7 +41,26 @@ import {
     const inviteCodeEl = document.getElementById('invite-code');
     const copyInviteBtn = document.getElementById('copy-invite-code');
 
+    // Modal elements
+    const addChoreModal = document.getElementById('addChoreModal');
+    const addExpenseModal = document.getElementById('addExpenseModal');
+    const inviteCodeModal = document.getElementById('inviteCodeModal');
+    const quickChoreForm = document.getElementById('quick-chore-form');
+    const quickExpenseForm = document.getElementById('quick-expense-form');
+    const submitQuickChore = document.getElementById('submit-quick-chore');
+    const submitQuickExpense = document.getElementById('submit-quick-expense');
+    const showInviteBtn = document.getElementById('show-invite-btn');
+    const modalInviteCode = document.getElementById('modal-invite-code');
+    const modalCopyInvite = document.getElementById('modal-copy-invite');
+
     let currentHousehold = null;
+    let householdMembers = [];
+    let bsChoreModal, bsExpenseModal, bsInviteModal;
+
+    // Initialize modals
+    if (addChoreModal) bsChoreModal = new bootstrap.Modal(addChoreModal);
+    if (addExpenseModal) bsExpenseModal = new bootstrap.Modal(addExpenseModal);
+    if (inviteCodeModal) bsInviteModal = new bootstrap.Modal(inviteCodeModal);
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -56,6 +78,9 @@ import {
             return;
           }
 
+          // Load members first
+          householdMembers = await getHouseholdMembers(currentHousehold.id);
+
           // Load all data
           await Promise.all([
             loadHouseholdInfo(),
@@ -64,6 +89,9 @@ import {
             loadRecentExpenses(),
             loadHouseholdMembers()
           ]);
+
+          // Initialize modals
+          setupModals();
 
         } catch (error) {
           console.error('Error loading home page:', error);
@@ -151,7 +179,7 @@ import {
       if (!currentHousehold || !upcomingChoresEl) return;
 
       try {
-        const chores = await getChoresDueSoon(currentHousehold.id);
+        const chores = await getIncompleteChores(currentHousehold.id);
         
         if (chores.length === 0) {
           upcomingChoresEl.innerHTML = `
@@ -162,7 +190,7 @@ import {
           return;
         }
 
-        const choresList = chores.slice(0, 5).map(chore => {
+        const choresList = chores.slice(0, 3).map(chore => {
           const dueDate = new Date(chore.dueDate + 'T00:00:00');
           const today = new Date();
           today.setHours(0, 0, 0, 0);
@@ -175,21 +203,33 @@ import {
           else if (isTomorrow) dueDateStr = 'Tomorrow';
 
           return `
-            <div class="d-flex align-items-center py-2 border-bottom">
-              <div class="flex-grow-1">
-                <div class="fw-semibold">${esc(chore.name)}</div>
+            <div class="d-flex align-items-center py-3 border-bottom chore-item" data-chore-id="${chore.id}">
+              <div class="flex-grow-1 me-2">
+                <div class="fw-semibold mb-1">${esc(chore.name)}</div>
                 <small class="text-muted">
                   ${esc(chore.assigneeName)} • ${esc(chore.frequency)}
                 </small>
               </div>
-              <div class="text-end">
+              <div class="text-end d-flex flex-column align-items-end gap-1">
                 <span class="badge ${isToday ? 'bg-danger' : isTomorrow ? 'bg-warning text-dark' : 'bg-secondary'}">${dueDateStr}</span>
+                <button class="btn btn-success btn-sm complete-chore-btn" data-chore-id="${chore.id}">
+                  <small>✓ Complete</small>
+                </button>
               </div>
             </div>
           `;
         }).join('');
 
-        upcomingChoresEl.innerHTML = `<div class="card-body">${choresList}</div>`;
+        upcomingChoresEl.innerHTML = `<div class="card-body scrollable-list">${choresList}</div>`;
+        
+        // Attach event listeners to complete buttons
+        upcomingChoresEl.querySelectorAll('.complete-chore-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const choreId = btn.dataset.choreId;
+            await handleCompleteChore(choreId, btn);
+          });
+        });
       } catch (error) {
         console.error('Error loading chores:', error);
         upcomingChoresEl.innerHTML = `
@@ -208,7 +248,7 @@ import {
           collection(db, 'expenses'),
           where('householdId', '==', currentHousehold.id),
           orderBy('createdAt', 'desc'),
-          limit(5)
+          limit(3)
         );
         
         const expensesSnapshot = await getDocs(expensesQuery);
@@ -225,23 +265,40 @@ import {
         const expensesList = [];
         expensesSnapshot.forEach(doc => {
           const expense = doc.data();
+          const expenseId = doc.id;
           const date = expense.createdAt?.toDate ? expense.createdAt.toDate() : new Date();
+          const participants = expense.participants || [];
+          const splitAmount = participants.length > 0 ? expense.amount / participants.length : expense.amount;
+          
           expensesList.push(`
-            <div class="d-flex align-items-center py-2 border-bottom">
-              <div class="flex-grow-1">
-                <div class="fw-semibold">${esc(expense.description || 'Expense')}</div>
+            <div class="d-flex align-items-center py-3 border-bottom expense-item" data-expense-id="${expenseId}">
+              <div class="flex-grow-1 me-2">
+                <div class="fw-semibold mb-1">${esc(expense.description || 'Expense')}</div>
                 <small class="text-muted">
-                  ${esc(expense.paidBy || 'Unknown')} • ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  ${esc(expense.paidBy || 'Unknown')} paid • ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </small>
+                <div><small class="text-muted">Split: $${splitAmount.toFixed(2)} each</small></div>
               </div>
-              <div class="text-end">
+              <div class="text-end d-flex flex-column align-items-end gap-1">
                 <span class="fw-bold text-success">$${(expense.amount || 0).toFixed(2)}</span>
+                <button class="btn btn-danger btn-sm delete-expense-btn" data-expense-id="${expenseId}">
+                  <small>✗ Delete</small>
+                </button>
               </div>
             </div>
           `);
         });
 
-        recentExpensesEl.innerHTML = `<div class="card-body">${expensesList.join('')}</div>`;
+        recentExpensesEl.innerHTML = `<div class="card-body scrollable-list">${expensesList.join('')}</div>`;
+        
+        // Attach event listeners to delete buttons
+        recentExpensesEl.querySelectorAll('.delete-expense-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const expenseId = btn.dataset.expenseId;
+            await handleDeleteExpense(expenseId, btn);
+          });
+        });
       } catch (error) {
         console.error('Error loading expenses:', error);
         recentExpensesEl.innerHTML = `
@@ -289,6 +346,269 @@ import {
           </div>
         `;
       }
+    }
+
+    function setupModals() {
+      // Populate chore assignee dropdown
+      const quickChoreAssignee = document.getElementById('quick-chore-assignee');
+      if (quickChoreAssignee) {
+        quickChoreAssignee.innerHTML = '<option value="">Select member...</option>';
+        householdMembers.forEach(member => {
+          const option = document.createElement('option');
+          option.value = member.uid;
+          option.textContent = member.displayName;
+          quickChoreAssignee.appendChild(option);
+        });
+      }
+
+      // Populate expense paid by dropdown
+      const quickExpensePaidBy = document.getElementById('quick-expense-paidby');
+      if (quickExpensePaidBy) {
+        quickExpensePaidBy.innerHTML = '<option value="">Select who paid...</option>';
+        householdMembers.forEach(member => {
+          const option = document.createElement('option');
+          option.value = member.displayName;
+          option.textContent = member.displayName;
+          option.dataset.uid = member.uid;
+          quickExpensePaidBy.appendChild(option);
+        });
+      }
+
+      // Populate expense participants checkboxes
+      const quickExpenseParticipants = document.getElementById('quick-expense-participants');
+      if (quickExpenseParticipants) {
+        quickExpenseParticipants.innerHTML = '';
+        householdMembers.forEach(member => {
+          const div = document.createElement('div');
+          div.className = 'form-check';
+          div.innerHTML = `
+            <input class="form-check-input" type="checkbox" value="${esc(member.displayName)}" 
+                   id="participant-${esc(member.uid)}" checked>
+            <label class="form-check-label" for="participant-${esc(member.uid)}">
+              ${esc(member.displayName)}
+            </label>
+          `;
+          quickExpenseParticipants.appendChild(div);
+        });
+      }
+
+      // Set default dates
+      const today = new Date().toISOString().split('T')[0];
+      const quickChoreDue = document.getElementById('quick-chore-due');
+      const quickExpenseDate = document.getElementById('quick-expense-date');
+      if (quickChoreDue) quickChoreDue.value = today;
+      if (quickExpenseDate) quickExpenseDate.value = today;
+
+      // Reset forms when modals are closed
+      if (addChoreModal) {
+        addChoreModal.addEventListener('hidden.bs.modal', () => {
+          quickChoreForm?.reset();
+          if (quickChoreDue) quickChoreDue.value = today;
+        });
+      }
+
+      if (addExpenseModal) {
+        addExpenseModal.addEventListener('hidden.bs.modal', () => {
+          quickExpenseForm?.reset();
+          if (quickExpenseDate) quickExpenseDate.value = today;
+          // Re-check all participants
+          quickExpenseParticipants?.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.checked = true;
+          });
+        });
+      }
+
+      // Handle chore form submission
+      if (submitQuickChore) {
+        submitQuickChore.addEventListener('click', async () => {
+          if (!quickChoreForm.checkValidity()) {
+            quickChoreForm.reportValidity();
+            return;
+          }
+
+          const formData = new FormData(quickChoreForm);
+          const assigneeId = formData.get('assignee');
+          const assigneeMember = householdMembers.find(m => m.uid === assigneeId);
+
+          try {
+            submitQuickChore.disabled = true;
+            submitQuickChore.textContent = 'Adding...';
+
+            await createChore({
+              name: formData.get('name'),
+              assigneeId: assigneeId,
+              assigneeName: assigneeMember ? assigneeMember.displayName : '',
+              frequency: formData.get('frequency'),
+              dueDate: formData.get('due'),
+              householdId: currentHousehold.id
+            });
+
+            // Reset form and close modal
+            quickChoreForm.reset();
+            bsChoreModal.hide();
+            
+            // Reload data
+            await Promise.all([loadStats(), loadUpcomingChores()]);
+            
+            showSuccessMessage('Chore added successfully!');
+          } catch (error) {
+            console.error('Error adding chore:', error);
+            showErrorMessage('Failed to add chore. Please try again.');
+          } finally {
+            submitQuickChore.disabled = false;
+            submitQuickChore.textContent = 'Add Chore';
+          }
+        });
+      }
+
+      // Handle expense form submission
+      if (submitQuickExpense) {
+        submitQuickExpense.addEventListener('click', async () => {
+          if (!quickExpenseForm.checkValidity()) {
+            quickExpenseForm.reportValidity();
+            return;
+          }
+
+          const formData = new FormData(quickExpenseForm);
+          
+          // Get checked participants
+          const participantCheckboxes = quickExpenseParticipants.querySelectorAll('input[type="checkbox"]:checked');
+          const participants = Array.from(participantCheckboxes).map(cb => cb.value);
+
+          if (participants.length === 0) {
+            showErrorMessage('Please select at least one participant.');
+            return;
+          }
+
+          try {
+            submitQuickExpense.disabled = true;
+            submitQuickExpense.textContent = 'Adding...';
+
+            await addExpense(currentHousehold.id, {
+              description: formData.get('description'),
+              amount: parseFloat(formData.get('amount')),
+              paidBy: formData.get('paidBy'),
+              participants: participants,
+              date: formData.get('date')
+            });
+
+            // Reset form and close modal
+            quickExpenseForm.reset();
+            bsExpenseModal.hide();
+            
+            // Reload data
+            await Promise.all([loadStats(), loadRecentExpenses()]);
+            
+            showSuccessMessage('Expense added successfully!');
+          } catch (error) {
+            console.error('Error adding expense:', error);
+            showErrorMessage('Failed to add expense. Please try again.');
+          } finally {
+            submitQuickExpense.disabled = false;
+            submitQuickExpense.textContent = 'Add Expense';
+          }
+        });
+      }
+
+      // Handle invite code modal
+      if (showInviteBtn) {
+        showInviteBtn.addEventListener('click', () => {
+          if (modalInviteCode) {
+            modalInviteCode.textContent = currentHousehold.inviteCode || '------';
+          }
+          bsInviteModal.show();
+        });
+      }
+
+      if (modalCopyInvite) {
+        modalCopyInvite.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(currentHousehold.inviteCode);
+            const originalText = modalCopyInvite.textContent;
+            modalCopyInvite.textContent = '✓ Copied!';
+            modalCopyInvite.classList.remove('btn-primary');
+            modalCopyInvite.classList.add('btn-success');
+            setTimeout(() => {
+              modalCopyInvite.textContent = originalText;
+              modalCopyInvite.classList.remove('btn-success');
+              modalCopyInvite.classList.add('btn-primary');
+            }, 2000);
+          } catch (error) {
+            console.error('Failed to copy:', error);
+            showErrorMessage('Failed to copy invite code.');
+          }
+        });
+      }
+    }
+
+    async function handleCompleteChore(choreId, button) {
+      if (!choreId) return;
+
+      try {
+        button.disabled = true;
+        button.innerHTML = '<small>⏳...</small>';
+
+        await toggleChoreCompletion(choreId, true);
+        
+        // Reload data
+        await Promise.all([loadStats(), loadUpcomingChores()]);
+        
+        showSuccessMessage('Chore marked as complete! 🎉');
+      } catch (error) {
+        console.error('Error completing chore:', error);
+        showErrorMessage('Failed to complete chore.');
+        button.disabled = false;
+        button.innerHTML = '<small>✓ Complete</small>';
+      }
+    }
+
+    async function handleDeleteExpense(expenseId, button) {
+      if (!expenseId) return;
+
+      if (!confirm('Are you sure you want to delete this expense?')) {
+        return;
+      }
+
+      try {
+        button.disabled = true;
+        button.innerHTML = '<small>⏳...</small>';
+
+        await deleteExpense(expenseId);
+        
+        // Reload data
+        await Promise.all([loadStats(), loadRecentExpenses()]);
+        
+        showSuccessMessage('Expense deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+        showErrorMessage('Failed to delete expense.');
+        button.disabled = false;
+        button.innerHTML = '<small>✗ Delete</small>';
+      }
+    }
+
+    function showSuccessMessage(message) {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+      alert.style.zIndex = '9999';
+      alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(alert);
+      setTimeout(() => alert.remove(), 3000);
+    }
+
+    function showErrorMessage(message) {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+      alert.style.zIndex = '9999';
+      alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(alert);
+      setTimeout(() => alert.remove(), 3000);
     }
   }
 
