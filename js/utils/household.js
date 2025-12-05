@@ -235,3 +235,50 @@ export async function regenerateInviteCode(householdId) {
 
   return newInviteCode;
 }
+
+/**
+ * Get all households the user is a member of
+ * @returns {Promise<Array>}
+ */
+export async function getUserHouseholds() {
+  const user = auth.currentUser;
+  if (!user) throw new Error('User must be authenticated');
+
+  const q = query(
+    collection(db, 'households'),
+    where('members', 'array-contains', user.uid)
+  );
+  
+  const querySnapshot = await getDocs(q);
+  const households = [];
+  
+  querySnapshot.forEach((doc) => {
+    households.push({
+      id: doc.id,
+      ...doc.data()
+    });
+  });
+
+  return households;
+}
+
+/**
+ * Switch to a different household
+ * @param {string} householdId
+ */
+export async function switchHousehold(householdId) {
+  const user = auth.currentUser;
+  if (!user) throw new Error('User must be authenticated');
+
+  // Verify user is a member of this household
+  const household = await getHousehold(householdId);
+  if (!household.members.includes(user.uid)) {
+    throw new Error('User is not a member of this household');
+  }
+
+  // Update user's active household
+  await updateDoc(doc(db, 'users', user.uid), {
+    householdId: householdId,
+    updatedAt: serverTimestamp()
+  });
+}

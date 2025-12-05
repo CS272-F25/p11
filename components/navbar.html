@@ -4,6 +4,17 @@
       <img src="/assets/logo.svg" alt="CoHabit logo" width="40" height="40" class="me-2">
       <strong>CoHabit</strong>
     </a>
+    
+    <!-- Household Selector Dropdown -->
+    <div class="dropdown ms-auto ms-lg-3 me-2" id="household-selector" style="display: none;">
+      <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="householdDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <span id="current-household-name">Loading...</span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="householdDropdown" id="household-dropdown-menu">
+        <li><span class="dropdown-item-text text-muted small">Loading households...</span></li>
+      </ul>
+    </div>
+    
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -31,4 +42,70 @@
       </ul>
     </div>
   </nav>
+  
+  <!-- Add Household Modal -->
+  <div class="modal fade" id="addHouseholdModal" tabindex="-1" aria-labelledby="addHouseholdModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addHouseholdModalLabel">Add Household</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="card-title mb-3">Create New Household</h6>
+                  <form id="modal-create-household-form">
+                    <div class="mb-3">
+                      <label for="modal-household-name" class="form-label">Household Name</label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="modal-household-name" 
+                        name="name"
+                        placeholder="e.g., 123 Main St Apartment"
+                        required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Create Household</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <div class="text-center text-muted">
+                <small>OR</small>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="card-title mb-3">Join Existing Household</h6>
+                  <form id="modal-join-household-form">
+                    <div class="mb-3">
+                      <label for="modal-invite-code" class="form-label">Invite Code</label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="modal-invite-code" 
+                        name="inviteCode"
+                        placeholder="Enter 6-character code"
+                        maxlength="6"
+                        style="text-transform: uppercase;"
+                        required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Join Household</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
+

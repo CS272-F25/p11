@@ -161,6 +161,10 @@ async function initHouseholdPage() {
         const result = await householdUtils.createHousehold(name);
         alert(`Household created! Invite code: ${result.inviteCode}`);
         await loadHouseholdData();
+        // Reload household selector
+        if (window.Cohabit && window.Cohabit.reloadHouseholdSelector) {
+          await window.Cohabit.reloadHouseholdSelector();
+        }
       } catch (error) {
         alert('Error creating household: ' + error.message);
       }
@@ -183,6 +187,10 @@ async function initHouseholdPage() {
         await householdUtils.joinHousehold(code);
         alert('Successfully joined household!');
         await loadHouseholdData();
+        // Reload household selector
+        if (window.Cohabit && window.Cohabit.reloadHouseholdSelector) {
+          await window.Cohabit.reloadHouseholdSelector();
+        }
       } catch (error) {
         alert('Error joining household: ' + error.message);
       }

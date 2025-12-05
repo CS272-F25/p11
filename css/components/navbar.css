@@ -3,8 +3,39 @@
   border-bottom: 4px solid rgba(0, 0, 0, 0.03);
 }
 
+/* Household Selector */
+#household-selector .btn {
+  min-width: 150px;
+  text-align: left;
+  font-size: 0.9rem;
+  border-width: 1px;
+}
+
+#household-selector .dropdown-menu {
+  min-width: 200px;
+}
+
+#household-selector .dropdown-item.active {
+  background-color: var(--bs-primary);
+  color: white;
+  font-weight: 500;
+}
+
+@media (max-width: 991px) {
+  #household-selector {
+    margin-left: 0 !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
 @media (max-width: 576px) {
   .navbar-brand {
     font-size: 1rem;
+  }
+  
+  #household-selector .btn {
+    font-size: 0.85rem;
+    min-width: 120px;
   }
 }
