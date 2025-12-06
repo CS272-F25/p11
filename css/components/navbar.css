@@ -4,6 +4,8 @@
   border-bottom: none !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1000;
 }
 
 .navbar-brand {
@@ -34,6 +36,11 @@
 }
 
 /* Household Selector */
+#household-selector {
+  position: relative;
+  z-index: 1100;
+}
+
 #household-selector .btn {
   min-width: 150px;
   text-align: left;
@@ -61,6 +68,7 @@
   box-shadow: var(--shadow-lg) !important;
   background: white !important;
   padding: 0.5rem;
+  z-index: 1050;
 }
 
 #household-selector .dropdown-item {

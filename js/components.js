@@ -41,6 +41,11 @@
       await loadComponent('navbar', '[data-component="navbar"]');
       const pageName = navPlaceholder.getAttribute('data-page');
       if (pageName) setActiveNav(pageName);
+      const addHouseholdModal = navPlaceholder.querySelector('#addHouseholdModal');
+      if (addHouseholdModal) {
+        // Keep modal outside navbar stacking context so it can overlay entire page
+        document.body.appendChild(addHouseholdModal);
+      }
       
       // Load household selector after navbar is loaded
       const script = document.createElement('script');
