@@ -8,6 +8,31 @@
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/components/forms.css" />
+  <style>
+    body[data-page="login"] {
+      background: radial-gradient(circle at top, #f4f6ff, #ffffff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    body[data-page="login"] .site-header {
+      display: none;
+    }
+    body[data-page="login"] #app {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+    }
+    body[data-page="login"] .auth-container {
+      max-width: 480px;
+      width: 100%;
+    }
+    body[data-page="login"] .auth-card {
+      box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.12);
+    }
+  </style>
 </head>
 <body data-page="login">
   <div data-component="navbar" data-page="login"></div>
