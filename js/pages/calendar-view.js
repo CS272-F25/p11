@@ -52,7 +52,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
         }
       } else {
         console.log('User not authenticated, redirecting to login...');
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
       }
     });
 

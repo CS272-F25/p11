@@ -1,4 +1,4 @@
-import { auth, db } from '/firebase.js';
+import { auth, db } from '../../firebase.js';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -68,7 +68,7 @@ loginForm?.addEventListener('submit', async (e) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
     setMessage('Signed in successfully. Redirecting...');
-    setTimeout(() => window.location.href = '/index.html', 1000);
+    setTimeout(() => window.location.href = 'index.html', 1000);
   } catch (err) {
     console.error('Login error:', err);
     let errorMessage = 'Failed to sign in.';
@@ -138,7 +138,7 @@ signupForm?.addEventListener('submit', async (e) => {
     
     console.log('Profile created successfully');
     setMessage('Account created successfully! Redirecting...');
-    setTimeout(() => window.location.href = '/index.html', 1000);
+    setTimeout(() => window.location.href = 'index.html', 1000);
   } catch (err) {
     console.error('Signup error:', err);
     console.error('Error code:', err.code);
@@ -180,7 +180,7 @@ onAuthStateChanged(auth, async (user) => {
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
         setMessage('Already signed in. Redirecting...');
-        setTimeout(() => window.location.href = '/index.html', 500);
+        setTimeout(() => window.location.href = 'index.html', 500);
       } else {
         // User exists in Auth but not in Firestore - stay on page to allow profile creation
         console.log('User found in Auth but not in Firestore');

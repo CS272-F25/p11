@@ -5,7 +5,7 @@
   // Load component from file and insert into target element
   async function loadComponent(componentName, targetSelector) {
     try {
-      const response = await fetch(`/components/${componentName}.html`);
+      const response = await fetch(`components/${componentName}.html`);
       if (!response.ok) throw new Error(`Failed to load ${componentName}`);
       const html = await response.text();
       const target = document.querySelector(targetSelector);
@@ -50,7 +50,7 @@
       // Load household selector after navbar is loaded
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = '/js/utils/household-selector.js';
+      script.src = 'js/utils/household-selector.js';
       document.body.appendChild(script);
     }
 

@@ -137,11 +137,11 @@ async function initHouseholdPage() {
 
   // Import Firebase and utilities
   try {
-    const firebaseModule = await import('/firebase.js');
+     const firebaseModule = await import('../../firebase.js');
     auth = firebaseModule.auth;
     const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
     onAuthStateChanged = authModule.onAuthStateChanged;
-    householdUtils = await import('/js/utils/household.js');
+     householdUtils = await import('../utils/household.js');
   } catch (error) {
     console.error('Error loading modules:', error);
     showError('Failed to load required modules');
@@ -283,7 +283,7 @@ async function initHouseholdPage() {
       currentUser = user;
       loadHouseholdData();
     } else {
-      window.location.href = 'login.html';
+        window.location.href = 'login.html';
     }
   });
 }

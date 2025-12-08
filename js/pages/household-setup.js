@@ -31,7 +31,7 @@ import {
 
     const user = auth.currentUser;
     if (!user) {
-      window.location.href = '/login.html';
+      window.location.href = 'login.html';
       return;
     }
 
@@ -102,7 +102,7 @@ import {
         
         // Redirect to home page to reload with new household data
         setTimeout(() => {
-          window.location.href = '/index.html';
+          window.location.href = 'index.html';
         }, 2000);
         
       } catch (error) {
@@ -155,7 +155,7 @@ import {
         
         // Redirect to home page to reload with new household data
         setTimeout(() => {
-          window.location.href = '/index.html';
+          window.location.href = 'index.html';
         }, 1500);
         
       } catch (error) {

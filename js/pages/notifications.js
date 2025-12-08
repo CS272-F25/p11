@@ -6,7 +6,7 @@
     if(!page) return;
     
     // Import Firebase modules dynamically
-    const { auth, db } = await import('/firebase.js');
+    const { auth, db } = await import('../../firebase.js');
     const { onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
     const { collection, query, where, getDocs, doc, updateDoc, deleteDoc, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
     
@@ -16,7 +16,7 @@
     // Wait for auth state
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
         return;
       }
       

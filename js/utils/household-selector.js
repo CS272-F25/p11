@@ -3,11 +3,11 @@
   let auth, onAuthStateChanged, householdUtils;
   
   try {
-    const firebaseModule = await import('/firebase.js');
+    const firebaseModule = await import('../../firebase.js');
     auth = firebaseModule.auth;
     const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
     onAuthStateChanged = authModule.onAuthStateChanged;
-    householdUtils = await import('/js/utils/household.js');
+    householdUtils = await import('./household.js');
   } catch (error) {
     console.error('Error loading modules for household selector:', error);
     return;

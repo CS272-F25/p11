@@ -1,4 +1,4 @@
-import { auth } from '/firebase.js';
+import { auth } from '../../firebase.js';
 import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 const signoutBtn = document.getElementById('signout-btn');
@@ -11,7 +11,7 @@ signoutBtn?.addEventListener('click', async () => {
   try {
     await signOut(auth);
     alert('Signed out successfully');
-    window.location.href = '/login.html';
+    window.location.href = 'login.html';
   } catch (err) {
     console.error('Sign out error:', err);
     alert('Failed to sign out: ' + (err?.message || 'Unknown error'));
@@ -22,7 +22,7 @@ signoutBtn?.addEventListener('click', async () => {
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     // User is not signed in, redirect to login
-    window.location.href = '/login.html';
+    window.location.href = 'login.html';
   } else {
     console.log('User authenticated:', user.email);
   }

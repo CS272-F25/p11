@@ -59,7 +59,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
           showError('Failed to load chores. Please try refreshing the page.');
         }
       } else {
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
       }
     });
 
