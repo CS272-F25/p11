@@ -25,11 +25,11 @@
 
     try {
       [firebaseModule, authModule, firestoreModule, householdModule, financeModule] = await Promise.all([
-        import('./firebase.js'),
+        import('../../firebase.js'),
         import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js'),
         import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'),
-        import('./js/utils/household.js'),
-        import('./js/utils/finance.js')
+        import('../utils/household.js'),
+        import('../utils/finance.js')
       ]);
     } catch (error) {
       console.error('Error loading modules:', error);
