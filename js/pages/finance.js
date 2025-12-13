@@ -71,7 +71,7 @@ import {
       const expenseList = document.getElementById('expense-list');
       const balanceList = document.getElementById('balance-list');
       const paidBySelect = document.getElementById('exPaidBy');
-      const participantsSelect = document.getElementById('exParticipants');
+      const participantCheckboxesContainer = document.getElementById('participantCheckboxes');
 
       // Load household members and populate dropdowns
       const householdMembers = await getHouseholdMembers(currentHousehold.id);
@@ -82,14 +82,17 @@ import {
           `<option value="${esc(member.displayName)}">${esc(member.displayName)}</option>`
         ).join('');
       
-      // Populate Participants dropdown
-      participantsSelect.innerHTML = 
-        householdMembers.map(member => 
-          `<option value="${esc(member.displayName)}">${esc(member.displayName)}</option>`
-        ).join('');
+      // Populate Participants checkboxes
+      participantCheckboxesContainer.innerHTML = householdMembers.map((member, idx) => `
+        <div class="form-check">
+          <input class="form-check-input participant-checkbox" type="checkbox" value="${esc(member.displayName)}" id="participant-${idx}" checked>
+          <label class="form-check-label" for="participant-${idx}">
+            ${esc(member.displayName)}
+          </label>
+        </div>
+      `).join('');
       
-      // Set default: select all participants
-      Array.from(participantsSelect.options).forEach(option => option.selected = true);
+      // All participants are checked by default
 
       // Define all the rendering functions with access to DOM elements
       function render(){
@@ -362,9 +365,9 @@ import {
         const amt = parseFloat(form.amount.value);
         const paidBy = paidBySelect.value;
         
-        // Get selected participants from multi-select
-        const selectedOptions = Array.from(participantsSelect.selectedOptions);
-        const participants = selectedOptions.map(option => option.value);
+        // Get selected participants from checkboxes
+        const checkedBoxes = document.querySelectorAll('.participant-checkbox:checked');
+        const participants = Array.from(checkedBoxes).map(checkbox => checkbox.value);
         
         if (!desc || !isFinite(amt) || amt <= 0 || !paidBy || participants.length === 0) {
           alert('Please fill in all fields correctly and select at least one participant');

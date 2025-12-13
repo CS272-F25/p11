@@ -89,11 +89,13 @@
             </select>
           </div>
           <div class="col-md-9">
-            <label for="exParticipants" class="form-label">Participants</label>
-            <select id="exParticipants" name="participants" class="form-select" multiple required style="min-height: 80px;">
-              <option value="">Select participants...</option>
-            </select>
-            <small class="text-muted d-block mt-1">Hold Ctrl/Cmd to select multiple members (or click and drag)</small>
+            <label class="form-label">Participants</label>
+            <div id="exParticipants" class="border rounded p-3" style="min-height: 80px;">
+              <small class="text-muted d-block mb-2">Select who should split this expense:</small>
+              <div id="participantCheckboxes" class="d-flex flex-wrap gap-3">
+                <!-- Checkboxes will be dynamically populated -->
+              </div>
+            </div>
           </div>
           <div class="col-md-3 d-flex align-items-end">
             <button class="btn btn-primary-custom w-100" type="submit">Add Expense</button>
